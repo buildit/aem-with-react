@@ -1,4 +1,3 @@
-/// <reference path="./typings/tsd.d.ts" />
 
 // globals
 declare var i18n: any;

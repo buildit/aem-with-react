@@ -13,7 +13,8 @@
   "files": [
     "./src/ComponentManager.tsx",
     "./src/CqUtils.tsx",
-    "./src/references.d.ts"
+    "./src/references.d.ts",
+    "./src/typings/tsd.d.ts"
 
   ]
 }
