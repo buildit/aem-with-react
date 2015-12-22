@@ -4,7 +4,7 @@
   "description": "Aem components in with reactjs.",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm install typescript",
+    "preinstall": "npm install typescript & tsd install",
     "build": "tsc",
     "postinstall": "npm run build"
   },
@@ -17,7 +17,8 @@
     "url": "https://git.sinnerschrader.com"
   },
   "devDependencies": {
-    "typescript": "1.6.2"
+    "typescript": "1.6.2",
+    "tsd": "^0.6.5"
   },
   "dependencies": {
     "react": "^0.13.3"

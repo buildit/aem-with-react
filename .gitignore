@@ -1,3 +1,5 @@
 **/target
 node_modules
 .idea
+src/typings
+npm-debug.log
