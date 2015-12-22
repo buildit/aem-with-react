@@ -1,0 +1,25 @@
+{
+  "name": "aem-react-js",
+  "version": "0.0.1",
+  "description": "Aem components in with reactjs.",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "npm install typescript",
+    "build": "tsc",
+    "postinstall": "npm run build"
+  },
+  "keywords": [
+    "typescript",
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git.sinnerschrader.com"
+  },
+  "devDependencies": {
+    "typescript": "1.6.2"
+  },
+  "dependencies": {
+    "react": "^0.13.3"
+  }
+}

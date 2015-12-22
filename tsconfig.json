@@ -1,0 +1,19 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es5",
+    "sourceMap": true,
+    "module": "commonjs",
+    "jsx": "react",
+    "noEmit": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": false
+  },
+  "files": [
+    "./src/ComponentManager.tsx",
+    "./src/CqUtils.tsx",
+    "./src/references.d.ts"
+
+  ]
+}
