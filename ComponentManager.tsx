@@ -1,4 +1,5 @@
 import * as React from 'react';
+import CqUtils from './CqUtils';
 
 
 declare var AemGlobal:any;
@@ -89,6 +90,7 @@ export class ComponentManager {
             }
             window.initReactComponents = ComponentManager.INSTANCE.initReactComponents.bind(ComponentManager.INSTANCE);
             AemGlobal.componentManager = ComponentManager.INSTANCE;
+            AemGlobal.CqUtils = CqUtils;
         }
     }
 }

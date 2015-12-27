@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npm install typescript & tsd install",
-    "build": "tsc",
-    "postinstall": "npm run build"
+    "build": "tsc --declaration",
+    "postinstall": "npm run build",
+    "prepublish":"tsc --declaration"
   },
   "keywords": [
     "typescript",

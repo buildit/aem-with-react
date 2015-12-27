@@ -1,10 +1,10 @@
-import * as Aem from '../aem/aem';
+import * as Aem from './aem';
 import * as React from 'react';
-
 
 export interface ContentModel {
     label: string;
     node:string;
+    resourceType:string;
 }
 
 export interface StackState {
@@ -12,10 +12,10 @@ export interface StackState {
 }
 
 
-export class StackContainer extends Aem.ResourceComponent<any,Aem.ResourceProps<any>, StackState> {
+export class StackContainer extends Aem.ResourceComponent<Aem.Resource,Aem.ResourceProps<Aem.Resource>, StackState> {
 
 
-    constructor(props:Aem.ResourceProps<any>) {
+    constructor(props:Aem.ResourceProps<Aem.Resource>) {
         super(props);
         this.state = {activeIndex: 0}
         Aem.Cq.register(this);
@@ -29,7 +29,11 @@ export class StackContainer extends Aem.ResourceComponent<any,Aem.ResourceProps<
         Object.keys(children).forEach(function (key:string, idx:number) {
             var child:any = children[key];
             var label:string = child.label || "set label please";
-            contentModel.push({node: key, label: label});
+            let resourceType:string = child["sling:resourceType"];
+            if (resourceType.substring(0, 5) !== "/apps") {
+                resourceType = "/apps/" + resourceType;
+            }
+            contentModel.push({node: key, label: label, resourceType: resourceType});
         }, this);
 
         return contentModel;

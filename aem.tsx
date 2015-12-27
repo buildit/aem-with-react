@@ -49,6 +49,9 @@ export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
 
 }
 
+export interface Resource {
+    "sling:resourceType":string;
+}
 
 export interface ResourceProps<C> extends AemProps {
     resource: C;
@@ -59,7 +62,7 @@ export interface ResourceProps<C> extends AemProps {
 /**
  * Provides base functionality for components that are
  */
-export class ResourceComponent<C, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
+export class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
 
 
     getChildren() {
@@ -78,6 +81,9 @@ export class ResourceComponent<C, P extends ResourceProps<any>, S> extends AemCo
         return this.props.resource;
     }
 
+    getResourceType():string {
+        return this.getResource()["sling:resourceType"];
+    }
 
     createNewChildNodeNames(prefix:String, count: number):string[] {
         var index:number = 1;

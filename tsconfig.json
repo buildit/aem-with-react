@@ -5,16 +5,18 @@
     "sourceMap": true,
     "module": "commonjs",
     "jsx": "react",
-    "noEmit": true,
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": false
   },
   "files": [
-    "./src/ComponentManager.tsx",
-    "./src/CqUtils.tsx",
-    "./src/references.d.ts",
-    "./src/typings/tsd.d.ts"
+    "./ComponentManager.tsx",
+    "./aem.tsx",
+    "./container.tsx",
+    "./include.tsx",
+    "./CqUtils.tsx",
+    "./references.d.ts",
+    "./typings/tsd.d.ts"
 
   ]
 }
