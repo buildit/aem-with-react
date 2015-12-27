@@ -1,4 +1,3 @@
-
 interface CqElement {
     dom:any;
 }
@@ -25,26 +24,29 @@ export default class CqUtils {
     /**
      * hide or show the editable at the path.
      */
-    static setVisible(path:string, visible:boolean, recursive:boolean=true) {
+    static setVisible(path:string, visible:boolean, recursive:boolean = true) {
         // TODO TouchUI : $("[data-path='/content/react-demo/demo/jcr:content/par/*']").hide()
         if (typeof CQ !== "undefined") {
             var editable = CQ.WCM.getEditable(path);
             if (editable) {
 
-                    var descendents = CQ.WCM.getNestedEditables(path);
-                    for (var idx = 0;
-                         idx < descendents.length;
-                         idx++) {
-                        var b = CQ.WCM.getEditable(descendents[idx]);
-                        if (b) {
-                            let alwaysHidden = b.element.dom.parentNode.getAttribute("data-always-hidden")=="true";
-                            if (!alwaysHidden) {
-                                this.setVisible(descendents[idx], visible, false);
-                            }
-                        }
-                    }
+                /*
+                 if (recursive) {
 
+                 var descendents = CQ.WCM.getNestedEditables(path);
+                 for (var idx = 0;
+                 idx < descendents.length;
+                 idx++) {
+                 var b = CQ.WCM.getEditable(descendents[idx]);
+                 if (b) {
+                 let alwaysHidden = b.element.dom.parentNode.getAttribute("data-always-hidden")=="true";
+                 if (!alwaysHidden) {
+                 this.setVisible(descendents[idx], visible, false);
+                 }
+                 }
+                 }}
 
+                 */
 
                 if (visible) {
                     editable.show(true);
@@ -58,7 +60,7 @@ export default class CqUtils {
                 // TODO remove listeners
                 CQ.WCM.on("editablesready", cb, this);
                 CQ.WCM.getTopWindow().CQ.WCM.on("editablesready", cb, this);
-                setTimeout(cb,0);
+                setTimeout(cb, 0);
             }
         }
     }
@@ -70,7 +72,7 @@ export default class CqUtils {
         // TODO TouchUi: Granite.author.persistence.createParagraph()
         var e:Editable = CQ.WCM.getEditable(ctx.path + relPath + "/*");
         e.createParagraph({
-            resourceType : resourceType
+            resourceType: resourceType
         });
     }
 }

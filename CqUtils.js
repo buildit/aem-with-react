@@ -6,16 +6,6 @@ var CqUtils = (function () {
         if (typeof CQ !== "undefined") {
             var editable = CQ.WCM.getEditable(path);
             if (editable) {
-                var descendents = CQ.WCM.getNestedEditables(path);
-                for (var idx = 0; idx < descendents.length; idx++) {
-                    var b = CQ.WCM.getEditable(descendents[idx]);
-                    if (b) {
-                        var alwaysHidden = b.element.dom.parentNode.getAttribute("data-always-hidden") == "true";
-                        if (!alwaysHidden) {
-                            this.setVisible(descendents[idx], visible, false);
-                        }
-                    }
-                }
                 if (visible) {
                     editable.show(true);
                 }

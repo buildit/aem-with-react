@@ -18,6 +18,7 @@ var RootComponent = (function (_super) {
 var ComponentManager = (function () {
     function ComponentManager() {
         this.components = null;
+        this.instances = [];
     }
     ComponentManager.prototype.renderReactComponent = function (component, props) {
         var comp = this.components[component];
@@ -30,6 +31,26 @@ var ComponentManager = (function () {
             this.initReactComponent(item[0]);
         }
     };
+    ComponentManager.prototype.addInstance = function (instance) {
+        this.instances.push(instance);
+    };
+    ComponentManager.prototype.getInstance = function (path) {
+        var filtered = this.instances.filter(function (instance) {
+            return instance.props.path == path;
+        });
+        if (filtered.length > 0) {
+            return filtered[0];
+        }
+        else {
+            return null;
+        }
+    };
+    ComponentManager.prototype.getNestedInstances = function (path) {
+        return this.instances.filter(function (instance) {
+            var instancePath = instance.props.path;
+            return instancePath && instance.props.root && instancePath.length > path.length && instancePath.substring(0, path.length) == path;
+        });
+    };
     ComponentManager.prototype.setComponents = function (comps) {
         this.components = comps;
     };
@@ -37,6 +58,7 @@ var ComponentManager = (function () {
         var textarea = document.getElementById(item.getAttribute('data-react-id'));
         if (textarea) {
             var props = JSON.parse(textarea.value);
+            props.root = true;
             var comp = this.components[props.component];
             if (comp == null) {
                 console.error("React component '" + props.component + "' does not exist in component list.");
@@ -76,6 +98,15 @@ var ComponentManager = (function () {
             window.initReactComponents = ComponentManager.INSTANCE.initReactComponents.bind(ComponentManager.INSTANCE);
             AemGlobal.componentManager = ComponentManager.INSTANCE;
             AemGlobal.CqUtils = CqUtils_1.default;
+        }
+    };
+    ComponentManager.prototype.setAllEditableVisible = function (path, visible) {
+        if (typeof window !== "undefined") {
+            setTimeout(function () {
+                this.getNestedInstances(path).forEach(function (instance) {
+                    instance.setChildrenEditableVisible(visible);
+                });
+            }.bind(this), 0);
         }
     };
     return ComponentManager;

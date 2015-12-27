@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var React = require('react');
+var component = require('./ComponentManager');
 var ResourceUtils = (function () {
     function ResourceUtils() {
     }
@@ -30,6 +31,16 @@ var AemComponent = (function (_super) {
     };
     AemComponent.prototype.isWcmEditable = function () {
         return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
+    };
+    AemComponent.prototype.componentDidMount = function () {
+        component.ComponentManager.INSTANCE.addInstance(this);
+    };
+    AemComponent.prototype.setChildrenEditableVisible = function (visible) {
+        this.props.cqHidden = !visible;
+        this.forceUpdate();
+    };
+    AemComponent.prototype.setAllEditableVisible = function (path, visible) {
+        component.ComponentManager.INSTANCE.setAllEditableVisible(path, visible);
     };
     return AemComponent;
 })(React.Component);
@@ -98,9 +109,7 @@ var CqEdit = (function (_super) {
         else {
             var dialog = this.props.dialog || this.props.resourceType + "/dialog";
             var json = {
-                "path": this.props.path,
-                "dialog": dialog,
-                "type": this.props.resourceType
+                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType
             };
             var js = "CQ.WCM.edit(" + JSON.stringify(json) + ");";
             return React.createElement(Script, {"js": js, "wcmmode": this.props.wcmmode});

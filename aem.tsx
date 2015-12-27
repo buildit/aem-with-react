@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as component from './ComponentManager';
+import CqUtils from './CqUtils';
 
 
 interface CqWindow extends Window {
@@ -14,9 +16,9 @@ export class ResourceUtils {
      * @param resource the resource
      * @returns {any} the sub object
      */
-    static getChildren(resource: any) {
-        var children: any={};
-        Object.keys(resource).forEach(function(propertyName: string) {
+    static getChildren(resource:any) {
+        var children:any = {};
+        Object.keys(resource).forEach(function (propertyName:string) {
             var child = resource[propertyName];
             if (child["jcr:primaryType"]) {
                 children[propertyName] = child;
@@ -28,9 +30,9 @@ export class ResourceUtils {
 }
 
 
-
 export interface AemProps {
     wcmmode:string;
+    cqHidden?:boolean;
 }
 
 /**
@@ -38,13 +40,28 @@ export interface AemProps {
  */
 export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
 
-
     isWcmEnabled() {
         return !this.props.wcmmode || this.props.wcmmode !== "disabled";
     }
 
     isWcmEditable() {
         return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
+    }
+
+
+
+    componentDidMount() {
+        component.ComponentManager.INSTANCE.addInstance(this);
+    }
+
+    setChildrenEditableVisible(visible:boolean) {
+        this.props.cqHidden=!visible;
+        this.forceUpdate();
+    }
+
+
+    setAllEditableVisible(path:string, visible:boolean) {
+        component.ComponentManager.INSTANCE.setAllEditableVisible(path, visible);
     }
 
 }
@@ -57,6 +74,7 @@ export interface ResourceProps<C> extends AemProps {
     resource: C;
     component?:string;
     path:string;
+    root:boolean;
 }
 
 /**
@@ -85,15 +103,15 @@ export class ResourceComponent<C extends Resource, P extends ResourceProps<any>,
         return this.getResource()["sling:resourceType"];
     }
 
-    createNewChildNodeNames(prefix:String, count: number):string[] {
+    createNewChildNodeNames(prefix:String, count:number):string[] {
         var index:number = 1;
-        var newNodeNames:string[]=[];
-        var existingNodeNames:string[]=Object.keys(this.getChildren())
+        var newNodeNames:string[] = [];
+        var existingNodeNames:string[] = Object.keys(this.getChildren())
 
-        for (let idx:number=0;idx<count;idx++) {
+        for (let idx:number = 0; idx < count; idx++) {
             var nodeName:string = null;
-            var index=idx;
-            while (nodeName === null || existingNodeNames.indexOf(nodeName)>=0) {
+            var index = idx;
+            while (nodeName === null || existingNodeNames.indexOf(nodeName) >= 0) {
                 nodeName = prefix + "_" + (index++);
             };
             newNodeNames.push(nodeName);
@@ -131,9 +149,7 @@ export class CqEdit extends AemComponent<CqEditProps,any> {
         } else {
             var dialog = this.props.dialog || this.props.resourceType + "/dialog";
             var json = {
-                "path": this.props.path,
-                "dialog": dialog,
-                "type": this.props.resourceType
+                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType
             };
 
             var js:string = "CQ.WCM.edit(" + JSON.stringify(json) + ");";
@@ -165,7 +181,7 @@ export interface EditMarkerProps extends AemProps {
     label?:string;
 }
 
-export class EditMarker extends AemComponent<EditMarkerProps,any>{
+export class EditMarker extends AemComponent<EditMarkerProps,any> {
     render() {
         if (this.props.wcmmode == "edit") {
             return <h3 className="placeholder">{this.props.label}</h3>

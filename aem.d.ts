@@ -4,10 +4,14 @@ export declare class ResourceUtils {
 }
 export interface AemProps {
     wcmmode: string;
+    cqHidden?: boolean;
 }
 export declare class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
     isWcmEnabled(): boolean;
     isWcmEditable(): boolean;
+    componentDidMount(): void;
+    setChildrenEditableVisible(visible: boolean): void;
+    setAllEditableVisible(path: string, visible: boolean): void;
 }
 export interface Resource {
     "sling:resourceType": string;
@@ -16,6 +20,7 @@ export interface ResourceProps<C> extends AemProps {
     resource: C;
     component?: string;
     path: string;
+    root: boolean;
 }
 export declare class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
     getChildren(): any;

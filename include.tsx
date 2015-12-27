@@ -1,14 +1,15 @@
+import * as aem from './aem';
 import * as React from 'react';
 import CqUtils from './CqUtils';
 
-export interface IncludeProps {
+export interface IncludeProps extends aem.AemProps{
     path: string;
     resourceType: string;
     element?:string;
     hidden?:boolean;
 }
 
-export class ResourceInclude extends React.Component<any, any> {
+export class ResourceInclude extends aem.AemComponent<IncludeProps, any> {
 
     componentDidMount() {
         if (this.props.hidden) {
@@ -25,7 +26,7 @@ export class ResourceInclude extends React.Component<any, any> {
             //innerHTML += "<script>AemReact.setVisibility('" + this.props.path + "',false)</script>";
         }
         if (this.props.hidden) {
-            CqUtils.setVisible(this.props.path, false);
+            CqUtils.setVisible(this.props.path,false,false);
         }
 
         return React.createElement(this.props.element || "div", {

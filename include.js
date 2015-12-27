@@ -3,6 +3,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var aem = require('./aem');
 var React = require('react');
 var CqUtils_1 = require('./CqUtils');
 var ResourceInclude = (function (_super) {
@@ -20,7 +21,7 @@ var ResourceInclude = (function (_super) {
         if (!!this.props.hidden) {
         }
         if (this.props.hidden) {
-            CqUtils_1.default.setVisible(this.props.path, false);
+            CqUtils_1.default.setVisible(this.props.path, false, false);
         }
         return React.createElement(this.props.element || "div", {
             "data-always-hidden": this.props.hidden,
@@ -29,6 +30,6 @@ var ResourceInclude = (function (_super) {
         });
     };
     return ResourceInclude;
-})(React.Component);
+})(aem.AemComponent);
 exports.ResourceInclude = ResourceInclude;
 //# sourceMappingURL=include.js.map
