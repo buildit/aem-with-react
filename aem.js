@@ -32,13 +32,6 @@ var AemComponent = (function (_super) {
     AemComponent.prototype.isWcmEditable = function () {
         return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
     };
-    AemComponent.prototype.componentDidMount = function () {
-        component.ComponentManager.INSTANCE.addInstance(this);
-    };
-    AemComponent.prototype.setChildrenEditableVisible = function (visible) {
-        this.props.cqHidden = !visible;
-        this.forceUpdate();
-    };
     AemComponent.prototype.setAllEditableVisible = function (path, visible) {
         component.ComponentManager.INSTANCE.setAllEditableVisible(path, visible);
     };
@@ -50,6 +43,9 @@ var ResourceComponent = (function (_super) {
     function ResourceComponent() {
         _super.apply(this, arguments);
     }
+    ResourceComponent.prototype.componentDidMount = function () {
+        component.ComponentManager.INSTANCE.addComponent(this);
+    };
     ResourceComponent.prototype.getChildren = function () {
         var resource = this.props.resource;
         var children = {};

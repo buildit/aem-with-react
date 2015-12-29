@@ -48,18 +48,6 @@ export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
         return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
     }
 
-
-
-    componentDidMount() {
-        component.ComponentManager.INSTANCE.addInstance(this);
-    }
-
-    setChildrenEditableVisible(visible:boolean) {
-        this.props.cqHidden=!visible;
-        this.forceUpdate();
-    }
-
-
     setAllEditableVisible(path:string, visible:boolean) {
         component.ComponentManager.INSTANCE.setAllEditableVisible(path, visible);
     }
@@ -82,6 +70,10 @@ export interface ResourceProps<C> extends AemProps {
  */
 export class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
 
+
+    componentDidMount() {
+        component.ComponentManager.INSTANCE.addComponent(this);
+    }
 
     getChildren() {
         var resource = this.props.resource;

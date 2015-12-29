@@ -21,15 +21,35 @@ class RootComponent extends React.Component<RootComponentProps, any> {
 }
 
 
+export class Instance {
+    path:string;
+    component:aem.AemComponent<any,any>;
+    node:any;
+    props:any;
+    componentClass:any;
+
+    rerender(extraProps:any):void {
+        let newProps:any = {};
+        Object.keys(this.props).forEach((key:string)=> {
+            newProps[key] = this.props[key]
+        })
+        Object.keys(extraProps).forEach((key:string)=> {
+            newProps[key] = extraProps[key]
+        })
+        React.render(<RootComponent comp={this.componentClass} {...newProps} />, this.node);
+    }
+}
+
+
 export class ComponentManager {
     static INSTANCE:ComponentManager;
     public components:{ [name: string]: typeof React.Component } = null;
 
     constructor() {
-        this.instances = [] as [React.Component<any,any>];
+        this.instances = {} as {[path:string]:  Instance};
     }
 
-    instances:[React.Component<any,any>];
+    instances:{[path:string]: Instance};
 
     renderReactComponent(component:string, props:any):string {
         let comp = this.components[component];
@@ -44,26 +64,34 @@ export class ComponentManager {
         }
     }
 
-    addInstance(instance:React.Component<any,any>) {
-        this.instances.push(instance);
-    }
-
-    getInstance(path:string) {
-        var filtered = this.instances.filter((instance:React.Component<any,any>)=> {
-            return instance.props.path == path;
-        });
-        if (filtered.length > 0) {
-            return filtered[0];
-        } else {
-            return null;
+    addComponent(component:React.Component<any,any>) {
+        let instance:Instance = this.instances[component.props.path];
+        if (instance) {
+            instance.component = component as aem.AemComponent<any,any>;
         }
     }
 
-    getNestedInstances(path:string) {
-        return this.instances.filter((instance:React.Component<any,any>)=> {
-            let instancePath = instance.props.path;
-            return instancePath && instance.props.root && instancePath.length > path.length && instancePath.substring(0, path.length) == path;
-        });
+    addInstance(path:string, componentClass:any, props:any, node:any) {
+        let instance = new Instance();
+        instance.props = props;
+        instance.node = node;
+        instance.componentClass = componentClass;
+        this.instances[path] = instance;
+    }
+
+    getInstance(path:string) {
+        return this.instances[path];
+    }
+
+    getNestedInstances(path:string):[Instance] {
+        let nested:[Instance] = [] as [Instance];
+        Object.keys(this.instances).forEach((instancePath:string)=> {
+            let instance:Instance = this.instances[instancePath];
+            if (instancePath && instance.props.root && instancePath.length > path.length && instancePath.substring(0, path.length) == path) {
+                nested.push(instance);
+            }
+        }, this);
+        return nested;
     }
 
     /**
@@ -85,7 +113,7 @@ export class ComponentManager {
             } else {
                 console.info("Rendering react component '" + props.component + "'.");
                 let component = React.render(<RootComponent comp={comp} {...props} />, item);
-                //this.instances.push(component);
+                this.addInstance(props.path, comp, props, item);
 
             }
         } else {
@@ -126,10 +154,11 @@ export class ComponentManager {
     }
 
     setAllEditableVisible(path:string, visible:boolean):void {
-        if (typeof window!=="undefined") {
+        if (typeof window !== "undefined") {
             setTimeout(function () {
-                this.getNestedInstances(path).forEach((instance:React.Component<any,any>)=> {
-                    (instance as aem.AemComponent<any,any>).setChildrenEditableVisible(visible)
+                this.getNestedInstances(path).forEach((instance:Instance)=> {
+                    // TODO rerender instance instead of changing props.
+                    instance.rerender({cqHidden: !visible});
                 })
             }.bind(this), 0);
         }

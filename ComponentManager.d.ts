@@ -1,6 +1,15 @@
 import * as React from 'react';
+import * as aem from './aem';
 export interface Config {
     server: boolean;
+}
+export declare class Instance {
+    path: string;
+    component: aem.AemComponent<any, any>;
+    node: any;
+    props: any;
+    componentClass: any;
+    rerender(extraProps: any): void;
 }
 export declare class ComponentManager {
     static INSTANCE: ComponentManager;
@@ -8,12 +17,15 @@ export declare class ComponentManager {
         [name: string]: typeof React.Component;
     };
     constructor();
-    instances: [React.Component<any, any>];
+    instances: {
+        [path: string]: Instance;
+    };
     renderReactComponent(component: string, props: any): string;
     updateComponent(id: string): void;
-    addInstance(instance: React.Component<any, any>): void;
-    getInstance(path: string): React.Component<any, any>;
-    getNestedInstances(path: string): React.Component<any, any>[];
+    addComponent(component: React.Component<any, any>): void;
+    addInstance(path: string, componentClass: any, props: any, node: any): void;
+    getInstance(path: string): Instance;
+    getNestedInstances(path: string): [Instance];
     setComponents(comps: {
         [name: string]: typeof React.Component;
     }): void;

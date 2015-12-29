@@ -9,8 +9,6 @@ export interface AemProps {
 export declare class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
     isWcmEnabled(): boolean;
     isWcmEditable(): boolean;
-    componentDidMount(): void;
-    setChildrenEditableVisible(visible: boolean): void;
     setAllEditableVisible(path: string, visible: boolean): void;
 }
 export interface Resource {
@@ -23,6 +21,7 @@ export interface ResourceProps<C> extends AemProps {
     root: boolean;
 }
 export declare class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
+    componentDidMount(): void;
     getChildren(): any;
     getResource(): C;
     getResourceType(): string;

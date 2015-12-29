@@ -15,10 +15,27 @@ var RootComponent = (function (_super) {
     };
     return RootComponent;
 })(React.Component);
+var Instance = (function () {
+    function Instance() {
+    }
+    Instance.prototype.rerender = function (extraProps) {
+        var _this = this;
+        var newProps = {};
+        Object.keys(this.props).forEach(function (key) {
+            newProps[key] = _this.props[key];
+        });
+        Object.keys(extraProps).forEach(function (key) {
+            newProps[key] = extraProps[key];
+        });
+        React.render(React.createElement(RootComponent, React.__spread({"comp": this.componentClass}, newProps)), this.node);
+    };
+    return Instance;
+})();
+exports.Instance = Instance;
 var ComponentManager = (function () {
     function ComponentManager() {
         this.components = null;
-        this.instances = [];
+        this.instances = {};
     }
     ComponentManager.prototype.renderReactComponent = function (component, props) {
         var comp = this.components[component];
@@ -31,25 +48,32 @@ var ComponentManager = (function () {
             this.initReactComponent(item[0]);
         }
     };
-    ComponentManager.prototype.addInstance = function (instance) {
-        this.instances.push(instance);
+    ComponentManager.prototype.addComponent = function (component) {
+        var instance = this.instances[component.props.path];
+        if (instance) {
+            instance.component = component;
+        }
+    };
+    ComponentManager.prototype.addInstance = function (path, componentClass, props, node) {
+        var instance = new Instance();
+        instance.props = props;
+        instance.node = node;
+        instance.componentClass = componentClass;
+        this.instances[path] = instance;
     };
     ComponentManager.prototype.getInstance = function (path) {
-        var filtered = this.instances.filter(function (instance) {
-            return instance.props.path == path;
-        });
-        if (filtered.length > 0) {
-            return filtered[0];
-        }
-        else {
-            return null;
-        }
+        return this.instances[path];
     };
     ComponentManager.prototype.getNestedInstances = function (path) {
-        return this.instances.filter(function (instance) {
-            var instancePath = instance.props.path;
-            return instancePath && instance.props.root && instancePath.length > path.length && instancePath.substring(0, path.length) == path;
-        });
+        var _this = this;
+        var nested = [];
+        Object.keys(this.instances).forEach(function (instancePath) {
+            var instance = _this.instances[instancePath];
+            if (instancePath && instance.props.root && instancePath.length > path.length && instancePath.substring(0, path.length) == path) {
+                nested.push(instance);
+            }
+        }, this);
+        return nested;
     };
     ComponentManager.prototype.setComponents = function (comps) {
         this.components = comps;
@@ -66,6 +90,7 @@ var ComponentManager = (function () {
             else {
                 console.info("Rendering react component '" + props.component + "'.");
                 var component = React.render(React.createElement(RootComponent, React.__spread({"comp": comp}, props)), item);
+                this.addInstance(props.path, comp, props, item);
             }
         }
         else {
@@ -104,7 +129,7 @@ var ComponentManager = (function () {
         if (typeof window !== "undefined") {
             setTimeout(function () {
                 this.getNestedInstances(path).forEach(function (instance) {
-                    instance.setChildrenEditableVisible(visible);
+                    instance.rerender({ cqHidden: !visible });
                 });
             }.bind(this), 0);
         }
