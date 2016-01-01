@@ -1,5 +1,9 @@
 **/target
 node_modules
 .idea
-src/typings
+typings
 npm-debug.log
+*.d.ts
+*.js
+*.js.map
+*.tgz
