@@ -41,6 +41,7 @@ export interface CqEditProps extends AemProps {
     path: string;
     resourceType: string;
     dialog?: string;
+    editConfig?: any;
 }
 export declare type WcmModeListener = (wcmmode: string) => void;
 export declare class CqEdit extends AemComponent<CqEditProps, any> {

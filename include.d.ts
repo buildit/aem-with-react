@@ -9,7 +9,6 @@ export interface IncludeProps extends aem.AemProps {
 export declare class ResourceInclude extends aem.AemComponent<IncludeProps, any> {
     componentDidMount(): void;
     render(): React.DOMElement<{
-        "data-always-hidden": boolean;
         hidden: boolean;
         dangerouslySetInnerHTML: {
             __html: string;

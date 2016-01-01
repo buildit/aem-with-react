@@ -105,7 +105,8 @@ export class ResourceComponent<C extends Resource, P extends ResourceProps<any>,
             var index = idx;
             while (nodeName === null || existingNodeNames.indexOf(nodeName) >= 0) {
                 nodeName = prefix + "_" + (index++);
-            };
+            }
+            ;
             newNodeNames.push(nodeName);
             existingNodeNames.push(nodeName);
         }
@@ -129,6 +130,7 @@ export interface CqEditProps extends AemProps {
     path:string;
     resourceType:string;
     dialog?:string;
+    editConfig?:any;
 }
 
 export declare type WcmModeListener = (wcmmode:string) => void;
@@ -139,9 +141,10 @@ export class CqEdit extends AemComponent<CqEditProps,any> {
         if (this.props.wcmmode == "disabled") {
             return null;
         } else {
-            var dialog = this.props.dialog || this.props.resourceType + "/dialog";
+            var dialog = this.props.dialog || "/apps/"+this.props.resourceType + "/dialog";
             var json = {
-                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType
+                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType, editConfig: this.props.editConfig
+
             };
 
             var js:string = "CQ.WCM.edit(" + JSON.stringify(json) + ");";

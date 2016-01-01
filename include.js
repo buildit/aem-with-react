@@ -24,7 +24,6 @@ var ResourceInclude = (function (_super) {
             CqUtils_1.default.setVisible(this.props.path, false, false);
         }
         return React.createElement(this.props.element || "div", {
-            "data-always-hidden": this.props.hidden,
             hidden: !!this.props.hidden,
             dangerouslySetInnerHTML: { __html: innerHTML }
         });

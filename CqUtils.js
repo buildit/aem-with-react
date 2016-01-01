@@ -29,6 +29,13 @@ var CqUtils = (function () {
             resourceType: resourceType
         });
     };
+    CqUtils.refresh = function (path) {
+        var e = CQ.WCM.getEditable(path);
+        e.refresh();
+    };
+    CqUtils.removeEditable = function (path) {
+        CQ.WCM.unregisterEditable(path);
+    };
     return CqUtils;
 })();
 Object.defineProperty(exports, "__esModule", { value: true });

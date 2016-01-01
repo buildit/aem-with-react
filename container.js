@@ -18,9 +18,6 @@ var StackContainer = (function (_super) {
             var child = children[key];
             var label = child.label || "set label please";
             var resourceType = child["sling:resourceType"];
-            if (resourceType.substring(0, 5) !== "/apps") {
-                resourceType = "/apps/" + resourceType;
-            }
             contentModel.push({ node: key, label: label, resourceType: resourceType });
         }, this);
         return contentModel;

@@ -10,6 +10,8 @@ export declare class Instance {
     props: any;
     componentClass: any;
     rerender(extraProps: any): void;
+    reload(): void;
+    rerenderByResource(resource: aem.Resource): void;
 }
 export declare class ComponentManager {
     static INSTANCE: ComponentManager;
@@ -30,6 +32,10 @@ export declare class ComponentManager {
         [name: string]: typeof React.Component;
     }): void;
     initReactComponent(item: any): void;
+    reloadComponent(path: string): void;
+    getParentInstance(path: string): Instance;
+    reloadRoot(path: string): void;
+    reloadRootInCq(path: string): void;
     initReactComponents(): void;
     static init(cfg: Config): void;
     setAllEditableVisible(path: string, visible: boolean): void;

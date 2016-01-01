@@ -103,9 +103,9 @@ var CqEdit = (function (_super) {
             return null;
         }
         else {
-            var dialog = this.props.dialog || this.props.resourceType + "/dialog";
+            var dialog = this.props.dialog || "/apps/" + this.props.resourceType + "/dialog";
             var json = {
-                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType
+                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType, editConfig: this.props.editConfig
             };
             var js = "CQ.WCM.edit(" + JSON.stringify(json) + ");";
             return React.createElement(Script, {"js": js, "wcmmode": this.props.wcmmode});

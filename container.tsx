@@ -30,9 +30,6 @@ export class StackContainer extends Aem.ResourceComponent<Aem.Resource,Aem.Resou
             var child:any = children[key];
             var label:string = child.label || "set label please";
             let resourceType:string = child["sling:resourceType"];
-            if (resourceType.substring(0, 5) !== "/apps") {
-                resourceType = "/apps/" + resourceType;
-            }
             contentModel.push({node: key, label: label, resourceType: resourceType});
         }, this);
 

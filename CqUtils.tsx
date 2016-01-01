@@ -7,9 +7,11 @@ interface Editable {
     show(skipNested?:boolean):void;
     hide(skipNested?:boolean):void;
     createParagraph(cfg:any):void;
+    refresh():void;
 }
 interface Wcm {
     getEditable(path:string):Editable;
+    unregisterEditable(path:string):void;
     getTopWindow():{CQ:Cq};
     on(event:string, callback:any, ctx:any):void;
     getNestedEditables(path:String):string[];
@@ -74,6 +76,16 @@ export default class CqUtils {
         e.createParagraph({
             resourceType: resourceType
         });
+    }
+    
+    
+    static refresh(path:string):void {
+        var e:Editable = CQ.WCM.getEditable(path);
+        e.refresh();
+    }
+
+    static removeEditable(path:string):void {
+        CQ.WCM.unregisterEditable(path);
     }
 }
 

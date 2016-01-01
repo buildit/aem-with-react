@@ -29,6 +29,19 @@ var Instance = (function () {
         });
         React.render(React.createElement(RootComponent, React.__spread({"comp": this.componentClass}, newProps)), this.node);
     };
+    Instance.prototype.reload = function () {
+        var _this = this;
+        var origin = window.location.origin;
+        var me = this;
+        window.fetch(origin + this.props.path + "." + this.props.depth + ".json", { credentials: 'same-origin' }).then(function (response) {
+            return response.json();
+        }).then(function (resource) {
+            _this.rerenderByResource(resource);
+        });
+    };
+    Instance.prototype.rerenderByResource = function (resource) {
+        this.rerender({ resource: resource });
+    };
     return Instance;
 })();
 exports.Instance = Instance;
@@ -44,7 +57,7 @@ var ComponentManager = (function () {
     };
     ComponentManager.prototype.updateComponent = function (id) {
         var item = document.querySelectorAll('[data-react-id="' + id + '"]');
-        if (item && item.length >= 0) {
+        if (item && item.length > 0) {
             this.initReactComponent(item[0]);
         }
     };
@@ -96,6 +109,32 @@ var ComponentManager = (function () {
         else {
             console.error("React config with id '" + item.getAttribute('data-react-id') + "' has no corresponding textarea element.");
         }
+    };
+    ComponentManager.prototype.reloadComponent = function (path) {
+        var instance = this.instances[path];
+        instance.reload();
+    };
+    ComponentManager.prototype.getParentInstance = function (path) {
+        var parts = path.split("/");
+        var parent = this.instances[path];
+        while (parts.length > 0 && parent == null) {
+            parts.pop();
+            path = parts.join("/");
+            parent = this.instances[path];
+            ;
+        }
+        return parent;
+    };
+    ComponentManager.prototype.reloadRoot = function (path) {
+        this.getParentInstance(path).reload();
+    };
+    ComponentManager.prototype.reloadRootInCq = function (path) {
+        var parent = this.getParentInstance(path);
+        var parentPath = parent.props.path;
+        setTimeout(function () {
+            CqUtils_1.default.removeEditable(path);
+        }, 0);
+        CqUtils_1.default.refresh(parentPath);
     };
     ComponentManager.prototype.initReactComponents = function () {
         var items = [].slice.call(document.querySelectorAll('[data-react]'));

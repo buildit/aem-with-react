@@ -9,6 +9,7 @@ export interface IncludeProps extends aem.AemProps{
     hidden?:boolean;
 }
 
+
 export class ResourceInclude extends aem.AemComponent<IncludeProps, any> {
 
     componentDidMount() {
@@ -20,22 +21,22 @@ export class ResourceInclude extends aem.AemComponent<IncludeProps, any> {
     render() {
 
 
-        var innerHTML:string = "{{{include-resource \"" + this.props.path + "\" \"" + this.props.resourceType + "\"}}}"
+            var innerHTML:string = "{{{include-resource \"" + this.props.path + "\" \"" + this.props.resourceType + "\"}}}"
 
-        if (!!this.props.hidden) {
-            //innerHTML += "<script>AemReact.setVisibility('" + this.props.path + "',false)</script>";
+            if (!!this.props.hidden) {
+                //innerHTML += "<script>AemReact.setVisibility('" + this.props.path + "',false)</script>";
+            }
+            if (this.props.hidden) {
+                CqUtils.setVisible(this.props.path,false,false);
+            }
+
+            return React.createElement(this.props.element || "div", {
+               // "data-always-hidden": this.props.hidden,
+                hidden: !!this.props.hidden,
+                dangerouslySetInnerHTML: {__html: innerHTML}
+            });
         }
-        if (this.props.hidden) {
-            CqUtils.setVisible(this.props.path,false,false);
-        }
-
-        return React.createElement(this.props.element || "div", {
-            "data-always-hidden": this.props.hidden,
-            hidden: !!this.props.hidden,
-            dangerouslySetInnerHTML: {__html: innerHTML}
-        });
 
 
-    }
 
 }

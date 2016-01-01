@@ -38,6 +38,27 @@ export class Instance {
         })
         React.render(<RootComponent comp={this.componentClass} {...newProps} />, this.node);
     }
+
+    reload() {
+        let origin:string = window.location.origin;
+        var me = this;
+        // TODO props.depth should be replaced by special suffix so loading of json can be customized in java class.
+        (window as FetchWindow).fetch(origin + this.props.path + "." + this.props.depth + ".json", {credentials: 'same-origin'}).then((response:any)=> {
+            return response.json();
+        }).then((resource:any)=> {
+            this.rerenderByResource(resource);
+        });
+
+    }
+
+    rerenderByResource(resource:aem.Resource):void {
+        this.rerender({resource: resource});
+    }
+}
+
+// TODO find proper typing and add polyfill
+interface FetchWindow extends Window {
+    fetch(url:string, options:any):any;
 }
 
 
@@ -59,7 +80,7 @@ export class ComponentManager {
 
     updateComponent(id:string) {
         let item:any = document.querySelectorAll('[data-react-id="' + id + '"]');
-        if (item && item.length >= 0) {
+        if (item && item.length > 0) {
             this.initReactComponent(item[0]);
         }
     }
@@ -121,6 +142,37 @@ export class ComponentManager {
         }
     }
 
+    reloadComponent(path:string) {
+        let instance = this.instances[path];
+        instance.reload();
+    }
+
+    getParentInstance(path:string):Instance {
+        let parts:string[] = path.split("/");
+        let parent:Instance = this.instances[path];
+        while (parts.length > 0 && parent == null) {
+            parts.pop();
+            path = parts.join("/");
+            parent = this.instances[path];
+            ;
+        }
+        return parent;
+    }
+
+    reloadRoot(path:string) {
+        this.getParentInstance(path).reload();
+    }
+
+    reloadRootInCq(path:string) {
+        let parent:Instance = this.getParentInstance(path);
+        let parentPath:string = parent.props.path;
+        setTimeout(()=> {
+            CqUtils.removeEditable(path)
+        }, 0);
+        CqUtils.refresh(parentPath);
+    }
+
+
     initReactComponents():void {
         let items = [].slice.call(document.querySelectorAll('[data-react]'));
         console.log(items.length + " react configs found.");
@@ -157,7 +209,6 @@ export class ComponentManager {
         if (typeof window !== "undefined") {
             setTimeout(function () {
                 this.getNestedInstances(path).forEach((instance:Instance)=> {
-                    // TODO rerender instance instead of changing props.
                     instance.rerender({cqHidden: !visible});
                 })
             }.bind(this), 0);
