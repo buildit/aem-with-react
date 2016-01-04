@@ -7,3 +7,4 @@ npm-debug.log
 *.js
 *.js.map
 *.tgz
+!references.d.ts
