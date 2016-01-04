@@ -1,10 +1,9 @@
-import * as Aem from './aem';
-import * as React from 'react';
+import * as Aem from "./aem";
 
 export interface ContentModel {
     label: string;
-    node:string;
-    resourceType:string;
+    node: string;
+    resourceType: string;
 }
 
 export interface StackState {
@@ -12,24 +11,26 @@ export interface StackState {
 }
 
 
-export class StackContainer extends Aem.ResourceComponent<Aem.Resource,Aem.ResourceProps<Aem.Resource>, StackState> {
+export class StackContainer extends Aem.ResourceComponent<Aem.Resource, Aem.ResourceProps<Aem.Resource>, StackState> {
 
 
-    constructor(props:Aem.ResourceProps<Aem.Resource>) {
+    constructor(props: Aem.ResourceProps<Aem.Resource>) {
         super(props);
-        this.state = {activeIndex: 0}
+        // TODO remove this
+        this.state = {activeIndex: 0};
+        // TODO move this to ComponentManager
         Aem.Cq.register(this);
     }
 
 
-    getContentModel(content:any):ContentModel[] {
-        let contentModel:ContentModel[] = [];
+    public getContentModel(content: any): ContentModel[] {
+        let contentModel: ContentModel[] = [];
 
-        var children:any = Aem.ResourceUtils.getChildren(content);
-        Object.keys(children).forEach(function (key:string, idx:number) {
-            var child:any = children[key];
-            var label:string = child.label || "set label please";
-            let resourceType:string = child["sling:resourceType"];
+        let children: any = Aem.ResourceUtils.getChildren(content);
+        Object.keys(children).forEach(function (key: string, idx: number): void {
+            let child: any = children[key];
+            let label: string = child.label || "set label please";
+            let resourceType: string = child["sling:resourceType"];
             contentModel.push({node: key, label: label, resourceType: resourceType});
         }, this);
 

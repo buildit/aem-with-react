@@ -1,13 +1,12 @@
-import * as React from 'react';
-import * as component from './ComponentManager';
-import CqUtils from './CqUtils';
+import * as React from "react";
+import * as component from "./ComponentManager";
 
 
 interface CqWindow extends Window {
     CQ: any;
 }
 
-declare var window:CqWindow;
+declare var window: CqWindow;
 
 export class ResourceUtils {
 
@@ -16,14 +15,14 @@ export class ResourceUtils {
      * @param resource the resource
      * @returns {any} the sub object
      */
-    static getChildren(resource:any) {
-        var children:any = {};
-        Object.keys(resource).forEach(function (propertyName:string) {
-            var child = resource[propertyName];
+    public static getChildren(resource: any): any {
+        let children: any = {};
+        Object.keys(resource).forEach((propertyName: string): void => {
+            let child = resource[propertyName];
             if (child["jcr:primaryType"]) {
                 children[propertyName] = child;
             }
-        })
+        });
         return children;
     }
 
@@ -31,8 +30,8 @@ export class ResourceUtils {
 
 
 export interface AemProps {
-    wcmmode:string;
-    cqHidden?:boolean;
+    wcmmode: string;
+    cqHidden?: boolean;
 }
 
 /**
@@ -40,29 +39,29 @@ export interface AemProps {
  */
 export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
 
-    isWcmEnabled() {
+    public isWcmEnabled(): boolean {
         return !this.props.wcmmode || this.props.wcmmode !== "disabled";
     }
 
-    isWcmEditable() {
+    public isWcmEditable(): boolean {
         return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
     }
 
-    setAllEditableVisible(path:string, visible:boolean) {
+    public setAllEditableVisible(path: string, visible: boolean): void {
         component.ComponentManager.INSTANCE.setAllEditableVisible(path, visible);
     }
 
 }
 
 export interface Resource {
-    "sling:resourceType":string;
+    "sling:resourceType": string;
 }
 
 export interface ResourceProps<C> extends AemProps {
     resource: C;
-    component?:string;
-    path:string;
-    root:boolean;
+    component?: string;
+    path: string;
+    root: boolean;
 }
 
 /**
@@ -71,42 +70,40 @@ export interface ResourceProps<C> extends AemProps {
 export class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
 
 
-    componentDidMount() {
+    public componentDidMount(): void {
         component.ComponentManager.INSTANCE.addComponent(this);
     }
 
-    getChildren() {
-        var resource = this.props.resource;
-        var children:any = {};
-        Object.keys(resource).forEach(function (propertyName:string) {
-            var child = resource[propertyName];
+    public getChildren(): any  {
+        let resource = this.props.resource;
+        let children: any = {};
+        Object.keys(resource).forEach((propertyName: string): void => {
+            let child = resource[propertyName];
             if (child["jcr:primaryType"]) {
                 children[propertyName] = child;
             }
-        })
+        });
         return children;
     }
 
-    getResource():C {
+    public getResource(): C {
         return this.props.resource;
     }
 
-    getResourceType():string {
+    public getResourceType(): string {
         return this.getResource()["sling:resourceType"];
     }
 
-    createNewChildNodeNames(prefix:String, count:number):string[] {
-        var index:number = 1;
-        var newNodeNames:string[] = [];
-        var existingNodeNames:string[] = Object.keys(this.getChildren())
+    public createNewChildNodeNames(prefix: String, count: number): string[] {
+        let newNodeNames: string[] = [];
+        let existingNodeNames: string[] = Object.keys(this.getChildren());
 
-        for (let idx:number = 0; idx < count; idx++) {
-            var nodeName:string = null;
-            var index = idx;
+        for (let idx: number = 0; idx < count; idx++) {
+            let nodeName: string = null;
+            let index: number = idx;
             while (nodeName === null || existingNodeNames.indexOf(nodeName) >= 0) {
                 nodeName = prefix + "_" + (index++);
             }
-            ;
             newNodeNames.push(nodeName);
             existingNodeNames.push(nodeName);
         }
@@ -117,37 +114,37 @@ export class ResourceComponent<C extends Resource, P extends ResourceProps<any>,
 
 
 export interface ScriptProps extends AemProps {
-    js:string;
+    js: string;
 }
 
-export class Script extends AemComponent<ScriptProps,any> {
-    render() {
+export class Script extends AemComponent<ScriptProps, any> {
+    public render(): React.ReactElement<any> {
         return React.createElement("script", {dangerouslySetInnerHTML: {__html: this.props.js}});
     }
 }
 
 export interface CqEditProps extends AemProps {
-    path:string;
-    resourceType:string;
-    dialog?:string;
-    editConfig?:any;
+    path: string;
+    resourceType: string;
+    dialog?: string;
+    editConfig?: any;
 }
 
-export declare type WcmModeListener = (wcmmode:string) => void;
+export declare type WcmModeListener = (wcmmode: string) => void;
 
-export class CqEdit extends AemComponent<CqEditProps,any> {
+export class CqEdit extends AemComponent<CqEditProps, any> {
 
-    render() {
-        if (this.props.wcmmode == "disabled") {
+    public render(): React.ReactElement<any> {
+        if (this.props.wcmmode === "disabled") {
             return null;
         } else {
-            var dialog = this.props.dialog || "/apps/"+this.props.resourceType + "/dialog";
-            var json = {
+            let dialog = this.props.dialog || "/apps/" + this.props.resourceType + "/dialog";
+            let json = {
                 "path": this.props.path, "dialog": dialog, "type": this.props.resourceType, editConfig: this.props.editConfig
 
             };
 
-            var js:string = "CQ.WCM.edit(" + JSON.stringify(json) + ");";
+            let js: string = "CQ.WCM.edit(" + JSON.stringify(json) + ");";
             return <Script js={js} wcmmode={this.props.wcmmode}/>;
         }
     }
@@ -156,14 +153,15 @@ export class CqEdit extends AemComponent<CqEditProps,any> {
 
 
 export class Cq {
-    static on(event:string, cb:WcmModeListener, ctx:any):void {
+    public static on(event: string, cb: WcmModeListener, ctx: any): void {
         if (typeof window !== "undefined" && window.CQ) {
             window.CQ.WCM.getTopWindow().CQ.WCM.on(event, cb, this);
         }
     }
 
-    static register(component:AemComponent<any,any>):void {
-        var cb = function (wcmmode:string) {
+    public static register(component: AemComponent<any, any>): void {
+        let cb = function (wcmmode: string): void {
+            // TODO use rendere
             component.props.wcmmode = wcmmode;
             component.forceUpdate();
         }.bind(this);
@@ -173,13 +171,13 @@ export class Cq {
 }
 
 export interface EditMarkerProps extends AemProps {
-    label?:string;
+    label?: string;
 }
 
-export class EditMarker extends AemComponent<EditMarkerProps,any> {
-    render() {
-        if (this.props.wcmmode == "edit") {
-            return <h3 className="placeholder">{this.props.label}</h3>
+export class EditMarker extends AemComponent<EditMarkerProps, any> {
+    public render(): React.ReactElement<any> {
+        if (this.props.wcmmode === "edit") {
+            return <h3 className="placeholder">{this.props.label}</h3>;
         } else {
             return null;
         }
