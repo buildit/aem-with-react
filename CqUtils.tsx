@@ -15,6 +15,8 @@ interface Wcm {
     getTopWindow(): {CQ: Cq};
     on(event: string, callback: any, ctx: any): void;
     getNestedEditables(path: String): string[];
+    getEditables(): any;
+    removeListener(event: String, cb: any): void;
 }
 interface Cq {
     WCM: Wcm;
@@ -38,13 +40,20 @@ export default class CqUtils {
                     editable.hide(true);
                 }
             } else {
-                let cb = function (): void {
-                    CqUtils.setVisible(path, visible, recursive);
-                };
-                // TODO remove listeners
-                CQ.WCM.on("editablesready", cb, this);
-                CQ.WCM.getTopWindow().CQ.WCM.on("editablesready", cb, this);
-                setTimeout(cb, 0);
+                if (Object.keys(CQ.WCM.getEditables()).length === 0) {
+                    let cb = function(): void {
+                        CqUtils.setVisible(path, visible, recursive);
+                        CQ.WCM.removeListener("editablesready", cb);
+                    }.bind(this);
+                    CQ.WCM.on("editablesready", cb, this);
+                } else {
+                    // This is the add accordion situation: editables already exist but the new editable will be created soon.
+                    // TODO handle the timing eithout setTimeout
+                    let cb = function (): void {
+                        CqUtils.setVisible(path, visible, recursive);
+                    };
+                    setTimeout(cb, 0);
+                }
             }
         }
     }

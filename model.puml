@@ -1,0 +1,101 @@
+@startuml
+
+
+
+class AemProps {
+    wcmmode: string;
+    cqHidden?: boolean;
+}
+
+class AemComponent {
+
+    isWcmEnabled(): boolean
+    isWcmEditable(): boolean
+    setAllEditableVisible(path: string, visible: boolean)
+}
+
+note right of AemProps
+cqHidden is true if this component
+and its ancestors are hidden.
+end note
+
+AemComponent -> AemProps : props
+
+class Resource {
+    "sling:resourceType": string;
+}
+
+class ResourceProps<R extends Resource> extends AemProps {
+    component?: string;
+    path: string;
+    root: boolean;
+}
+
+ResourceProps -> Resource : resource
+
+class ResourceComponent<R extends Resource> extends AemComponent{
+    getResource():R
+}
+
+note left of ResourceComponent
+ResourceComponent has type parameters:
+- Resource
+- ResourceProps
+- State
+end note
+
+
+ResourceComponent -> ResourceProps : props
+
+
+class MyComponent<MyResource> extends ResourceComponent {
+    getResource():MyResource
+}
+
+class MyResource extends Resource {
+}
+
+MyComponent --> ResourceProps : props
+
+MyComponent .> MyResource
+
+class Instance {
+    path: string;
+    node: any
+    props: any
+    componentClass: any
+
+    rerender(extraProps: any): void
+    reload(): void
+    rerenderByResource(resource: aem.Resource): void
+}
+
+Instance -up-> ResourceComponent : component
+
+note bottom of Instance
+There is an Instance wrapping each root react component.
+The instance provides methods to rerender the component
+with new props.
+end note
+
+class ComponentManager {
+    renderReactComponent(component: string, props: any): string
+    getInstance(path: string): Instance
+    getNestedInstances(path: string): [Instance]
+    reloadComponent(path: string): void
+    getParentInstance(path: string): Instance
+    reloadRoot(path: string): void
+    reloadRootInCq(path: string): void
+    setNestedInstancesVisible(path: string, visible: boolean): void
+}
+
+ComponentManager -up-> Instance : instances
+
+note bottom of ComponentManager
+The ComponentManager provides access to all existing Instances.
+Also provides methids to create and update instances.
+
+end note
+
+
+@enduml

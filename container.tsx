@@ -19,7 +19,6 @@ export class StackContainer extends Aem.ResourceComponent<Aem.Resource, Aem.Reso
         // TODO remove this
         this.state = {activeIndex: 0};
         // TODO move this to ComponentManager
-        Aem.Cq.register(this);
     }
 
 

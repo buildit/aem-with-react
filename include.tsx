@@ -12,12 +12,6 @@ export interface IncludeProps extends aem.AemProps {
 
 export class ResourceInclude extends aem.AemComponent<IncludeProps, any> {
 
-    public componentDidMount(): void {
-        if (this.props.hidden) {
-            CqUtils.setVisible(this.props.path, false);
-        }
-    }
-
     public render(): React.ReactElement<any> {
 
 

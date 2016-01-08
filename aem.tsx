@@ -47,8 +47,13 @@ export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
         return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
     }
 
+    /**
+     * change visibility of all nested react component roots.
+     * @param path
+     * @param visible
+     */
     public setAllEditableVisible(path: string, visible: boolean): void {
-        component.ComponentManager.INSTANCE.setAllEditableVisible(path, visible);
+        component.ComponentManager.INSTANCE.setNestedInstancesVisible(path, visible);
     }
 
 }
@@ -159,15 +164,6 @@ export class Cq {
         }
     }
 
-    public static register(component: AemComponent<any, any>): void {
-        let cb = function (wcmmode: string): void {
-            // TODO use rendere
-            component.props.wcmmode = wcmmode;
-            component.forceUpdate();
-        }.bind(this);
-        Cq.on("wcmmodechange", cb, null);
-
-    }
 }
 
 export interface EditMarkerProps extends AemProps {

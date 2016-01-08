@@ -20,7 +20,9 @@ class RootComponent extends React.Component<RootComponentProps, any> {
     }
 }
 
-
+/**
+ * An Instance wraps a root aem component and provides methods to rerender the component.
+ */
 export class Instance {
     public path: string;
     public component: aem.AemComponent<any, any>;
@@ -28,6 +30,10 @@ export class Instance {
     public props: any;
     public componentClass: any;
 
+    /**
+     * rerender the component
+     * @param extraProps extra props are merged into existing props
+     */
     public rerender(extraProps: any): void {
         let newProps: any = {};
         Object.keys(this.props).forEach((key: string) => {
@@ -39,6 +45,9 @@ export class Instance {
         React.render(<RootComponent comp={this.componentClass} {...newProps} />, this.node);
     }
 
+    /**
+     * reload the jcr:node from server and rerender component.
+     */
     public reload(): void {
         let origin: string = window.location.origin;
         // TODO props.depth should be replaced by special suffix so loading of json can be customized in java class.
@@ -51,6 +60,10 @@ export class Instance {
 
     }
 
+    /**
+     * rerender this instance with the new resource
+     * @param resource
+     */
     public rerenderByResource(resource: aem.Resource): void {
         this.rerender({resource: resource});
     }
@@ -61,7 +74,9 @@ interface FetchWindow extends Window {
     fetch(url: string, options: any): any;
 }
 
-
+/**
+ * The Component
+ */
 export class ComponentManager {
     public static INSTANCE: ComponentManager;
     public components: { [name: string]: typeof React.Component } = null;
@@ -93,15 +108,28 @@ export class ComponentManager {
 
     constructor() {
         this.instances = {} as {[path: string]:  Instance};
+        // TODO fix the dependencies
+        aem.Cq.on("wcmmodechange", this.onWcmModeChange, this);
+
     }
 
-
+    /**
+     * render component as string. Server-side only.
+     * @param component
+     * @param props
+     * @returns {string}
+     */
     public renderReactComponent(component: string, props: any): string {
         let comp: typeof React.Component = this.components[component];
         console.log("rendering " + component);
         return React.renderToString(<RootComponent comp={comp} {...props} />);
     }
 
+    /**
+     * initialize specific component located in dom.
+     * TODO properly destroy instance that is replaced.
+     * @param id
+     */
     public updateComponent(id: string): void {
         let item: any = document.querySelectorAll("[data-react-id='" + id + "']");
         if (item && item.length > 0) {
@@ -109,13 +137,36 @@ export class ComponentManager {
         }
     }
 
+    public onWcmModeChange(wcmmode: string): void {
+        Object.keys(this.instances).forEach((path: string) => {
+            this.instances[path].rerender({wcmmode: wcmmode});
+        }, this);
+    }
+
+    /**
+     * register a component and create an associated instance.
+     * Called from Component's componentDidMount. Will be a noop if
+     * the associated instance does not exist. Therefore component must provide path property.
+     * // TODO this only makes sense for root Components?!
+     * @param component
+     */
     public addComponent(component: React.Component<any, any>): void {
+        // TODO fix component type - should be ResourceComponent
         let instance: Instance = this.instances[component.props.path];
         if (instance) {
             instance.component = component as aem.AemComponent<any, any>;
+
         }
     }
 
+
+    /**
+     * add instance for root component
+     * @param path
+     * @param componentClass
+     * @param props
+     * @param node
+     */
     public addInstance(path: string, componentClass: any, props: any, node: any): void {
         let instance: Instance = new Instance();
         instance.props = props;
@@ -124,10 +175,20 @@ export class ComponentManager {
         this.instances[path] = instance;
     }
 
+    /**
+     * find instance for path.
+     * @param path
+     * @returns {Instance}
+     */
     public getInstance(path: string): Instance {
         return this.instances[path];
     }
 
+    /**
+     * find nistances that are nested in the instance given by püath
+     * @param path
+     * @returns {any}
+     */
     public getNestedInstances(path: string): [Instance] {
         let nested: [Instance] = [] as [Instance];
         Object.keys(this.instances).forEach((instancePath: string) => {
@@ -141,13 +202,17 @@ export class ComponentManager {
     }
 
     /**
-     * set the components
+     * set the react component types available
      * @param comps
      */
     public setComponents(comps: { [name: string]: typeof React.Component }): void {
         this.components = comps;
     }
 
+    /**
+     * initialize react component in dom.
+     * @param item
+     */
     public initReactComponent(item: any): void {
         let textarea = document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
         if (textarea) {
@@ -167,11 +232,20 @@ export class ComponentManager {
         }
     }
 
+    /**
+     * reload the instance
+     * @param path
+     */
     public reloadComponent(path: string): void {
         let instance: Instance = this.instances[path];
         instance.reload();
     }
 
+    /**
+     * get instance wrapping this resource path
+     * @param path
+     * @returns {Instance}
+     */
     public getParentInstance(path: string): Instance {
         let parts: string[] = path.split("/");
         let parent: Instance = this.instances[path];
@@ -183,13 +257,22 @@ export class ComponentManager {
         return parent;
     }
 
+    /**
+     * relod the instance
+     * @param path component inside the instance
+     */
     public reloadRoot(path: string): void {
         this.getParentInstance(path).reload();
     }
 
+    /**
+     * reload the instance via CQ. Make sure that a new editable is created.
+     * @param path
+     */
     public reloadRootInCq(path: string): void {
         let parent: Instance = this.getParentInstance(path);
         let parentPath: string = parent.props.path;
+        // TODO why this timeout
         setTimeout(() => {
             CqUtils.removeEditable(path);
         }, 0);
@@ -197,6 +280,9 @@ export class ComponentManager {
     }
 
 
+    /**
+     * find all root elements and initialize the react components
+     */
     public initReactComponents(): void {
         let items = [].slice.call(document.querySelectorAll("[data-react]"));
         console.log(items.length + " react configs found.");
@@ -205,8 +291,15 @@ export class ComponentManager {
         }
     }
 
-    public setAllEditableVisible(path: string, visible: boolean): void {
+    /**
+     * rerender nested instances of path with cqHidden set to !visible
+     * @param path
+     * @param visible
+     */
+    public setNestedInstancesVisible(path: string, visible: boolean): void {
         if (typeof window !== "undefined") {
+            // timeout necessary to make sure that nested instances are ready.
+            // TODO improve timing by removing setTimeout
             setTimeout(function (): void {
                 this.getNestedInstances(path).forEach((instance: Instance) => {
                     instance.rerender({cqHidden: !visible});
