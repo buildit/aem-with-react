@@ -164,6 +164,16 @@ export class Cq {
         }
     }
 
+    public static register(component: AemComponent<any, any>): void {
+        let cb = function (wcmmode: string): void {
+            // TODO use rendere
+            component.props.wcmmode = wcmmode;
+            component.forceUpdate();
+        }.bind(this);
+        Cq.on("wcmmodechange", cb, null);
+
+    }
+
 }
 
 export interface EditMarkerProps extends AemProps {

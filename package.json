@@ -1,7 +1,7 @@
 {
   "name": "aem-react-js",
-  "version": "0.1.1",
-  "description": "Aem components with reactjs.",
+  "version": "0.1.2",
+  "description": "Aem components with React.",
   "main": "index.js",
   "scripts": {
     "preinstall": "npm install typescript & tsd install",
