@@ -1,6 +1,6 @@
 # AEM React integration module
 
-this npm module that is required by the [AEM React Integration project](http://www.github.com/aem-react-js)
+This npm module  is required by the [AEM React Integration project](http://www.github.com/sinnerschrader/aem-react-js).
 This library is written in TypeScript.
 
 ## Basic usage
