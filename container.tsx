@@ -11,7 +11,7 @@ export interface StackState {
 }
 
 
-export class StackContainer extends Aem.ResourceComponent<Aem.Resource, Aem.ResourceProps<Aem.Resource>, StackState> {
+export abstract class StackContainer extends Aem.ResourceComponent<Aem.Resource, Aem.ResourceProps<Aem.Resource>, StackState> {
 
 
     constructor(props: Aem.ResourceProps<Aem.Resource>) {

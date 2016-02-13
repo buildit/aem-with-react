@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as component from "./ComponentManager";
-
+import CqUtils from "./CqUtils";
 
 interface CqWindow extends Window {
     CQ: any;
@@ -30,7 +30,6 @@ export class ResourceUtils {
 
 
 export interface AemProps {
-    wcmmode: string;
     cqHidden?: boolean;
 }
 
@@ -39,12 +38,36 @@ export interface AemProps {
  */
 export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
 
+
+    public static contextTypes: any = {
+        wcmmode: React.PropTypes.string, path: React.PropTypes.string, resource: React.PropTypes.any
+    };
+
+    public context: {
+        wcmmode: string;
+        path: string;
+        resource: any;
+    };
+
+
+    public getWcmmode(): string {
+        return this.context.wcmmode;
+    }
+
+    public getPath(): string {
+        return this.context.wcmmode;
+    }
+
+    public getResource(): any {
+        return this.context.resource;
+    }
+
     public isWcmEnabled(): boolean {
-        return !this.props.wcmmode || this.props.wcmmode !== "disabled";
+        return !this.getWcmmode() || this.getWcmmode() !== "disabled";
     }
 
     public isWcmEditable(): boolean {
-        return ["disabled", "preview"].indexOf(this.props.wcmmode) < 0;
+        return ["disabled", "preview"].indexOf(this.getWcmmode()) < 0;
     }
 
     /**
@@ -58,28 +81,105 @@ export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
 
 }
 
+export interface IncludeProps extends AemProps {
+    path: string;
+    resourceType: string;
+    hidden?: boolean;
+}
+
+
+export class EditDialog extends AemComponent<IncludeProps, any> {
+
+    public render(): React.ReactElement<any> {
+
+
+        let script: string = "{{{edit-dialog \"" + this.props.path + "\" \"" + this.props.resourceType + "\"}}}";
+
+        if (this.props.hidden) {
+            CqUtils.setVisible(this.props.path, false, false);
+        }
+
+        return React.createElement("script", {
+            // "data-always-hidden": this.props.hidden,
+            hidden: !!this.props.hidden, dangerouslySetInnerHTML: {__html: script}
+        });
+    }
+
+
+}
+
+
 export interface Resource {
     "sling:resourceType": string;
 }
 
 export interface ResourceProps<C> extends AemProps {
-    resource: C;
+    resource?: C;
     component?: string;
     path: string;
-    root: boolean;
+    root?: boolean;
+    wcmmode?: string;
 }
+
 
 /**
  * Provides base functionality for components that are
  */
-export class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
+export abstract class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
 
+
+    public getChildContext(): any {
+        return {
+            resource: this.getResource(),
+            wcmmode: this.props.wcmmode || this.context.wcmmode,
+            path: this.getPath()
+        };
+
+    }
+
+    public static childContextTypes: any = {
+        wcmmode: React.PropTypes.string, path: React.PropTypes.string, resource: React.PropTypes.any
+    };
+
+
+    public getWcmmode(): string {
+        return this.props.wcmmode || this.context.wcmmode;
+    }
+
+    public getPath(): string {
+        if (this.context.path && this.props.path) {
+            return this.context.path + "/" + this.props.path;
+        } else if (this.props.path) {
+            return this.props.path;
+        } else {
+            return this.context.path;
+        }
+
+    }
 
     public componentDidMount(): void {
         component.ComponentManager.INSTANCE.addComponent(this);
     }
 
-    public getChildren(): any  {
+
+    public render(): React.ReactElement<any> {
+        if (this.isWcmEditable() && this.props.root !== true) {
+            let editDialog: React.ReactElement<any> = this.props.root ? null : (
+                <EditDialog path={this.getPath()} resourceType="react-demo/components/text"/>);
+            return (
+                <div>
+                    {this.renderBody()}
+                    {editDialog}
+                </div>
+            );
+        } else {
+            return this.renderBody();
+        }
+    }
+
+    public abstract renderBody(): React.ReactElement<any>;
+
+    public getChildren(): any {
         let resource = this.props.resource;
         let children: any = {};
         Object.keys(resource).forEach((propertyName: string): void => {
@@ -92,7 +192,7 @@ export class ResourceComponent<C extends Resource, P extends ResourceProps<any>,
     }
 
     public getResource(): C {
-        return this.props.resource;
+        return this.props.resource || this.context.resource[this.props.path];
     }
 
     public getResourceType(): string {
@@ -140,7 +240,7 @@ export declare type WcmModeListener = (wcmmode: string) => void;
 export class CqEdit extends AemComponent<CqEditProps, any> {
 
     public render(): React.ReactElement<any> {
-        if (this.props.wcmmode === "disabled") {
+        if (this.getWcmmode() === "disabled") {
             return null;
         } else {
             let dialog = this.props.dialog || "/apps/" + this.props.resourceType + "/dialog";
@@ -150,7 +250,7 @@ export class CqEdit extends AemComponent<CqEditProps, any> {
             };
 
             let js: string = "CQ.WCM.edit(" + JSON.stringify(json) + ");";
-            return <Script js={js} wcmmode={this.props.wcmmode}/>;
+            return <Script js={js}/>;
         }
     }
 
@@ -182,7 +282,7 @@ export interface EditMarkerProps extends AemProps {
 
 export class EditMarker extends AemComponent<EditMarkerProps, any> {
     public render(): React.ReactElement<any> {
-        if (this.props.wcmmode === "edit") {
+        if (this.getWcmmode() === "edit") {
             return <h3 className="placeholder">{this.props.label}</h3>;
         } else {
             return null;
