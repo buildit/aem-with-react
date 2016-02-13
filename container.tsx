@@ -22,18 +22,6 @@ export abstract class StackContainer extends Aem.ResourceComponent<Aem.Resource,
     }
 
 
-    public getContentModel(content: any): ContentModel[] {
-        let contentModel: ContentModel[] = [];
 
-        let children: any = Aem.ResourceUtils.getChildren(content);
-        Object.keys(children).forEach(function (key: string, idx: number): void {
-            let child: any = children[key];
-            let label: string = child.label || "set label please";
-            let resourceType: string = child["sling:resourceType"];
-            contentModel.push({node: key, label: label, resourceType: resourceType});
-        }, this);
-
-        return contentModel;
-    };
 
 }

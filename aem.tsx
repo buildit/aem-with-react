@@ -165,7 +165,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     public render(): React.ReactElement<any> {
         if (this.isWcmEditable() && this.props.root !== true) {
             let editDialog: React.ReactElement<any> = this.props.root ? null : (
-                <EditDialog path={this.getPath()} resourceType="react-demo/components/text"/>);
+                <EditDialog path={this.getPath()} resourceType={this.getResourceType()}/>);
             return (
                 <div>
                     {this.renderBody()}
