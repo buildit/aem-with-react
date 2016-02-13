@@ -2,7 +2,7 @@ import * as aem from "./aem";
 import * as React from "react";
 import CqUtils from "./CqUtils";
 
-export interface IncludeProps extends aem.AemProps {
+export interface IncludeProps  {
     path: string;
     resourceType: string;
     element?: string;

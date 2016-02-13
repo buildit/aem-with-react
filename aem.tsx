@@ -29,29 +29,33 @@ export class ResourceUtils {
 }
 
 
-export interface AemProps {
-    cqHidden?: boolean;
-}
-
 /**
  * Provides base functionality for components that are
  */
-export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
+export class AemComponent<P, S> extends React.Component<P, S> {
 
 
     public static contextTypes: any = {
-        wcmmode: React.PropTypes.string, path: React.PropTypes.string, resource: React.PropTypes.any
+        wcmmode: React.PropTypes.string, //
+        path: React.PropTypes.string, //
+        resource: React.PropTypes.any, //
+        cqHidden: React.PropTypes.bool
     };
 
     public context: {
         wcmmode: string;
         path: string;
         resource: any;
+        cqHidden: boolean;
     };
 
 
     public getWcmmode(): string {
         return this.context.wcmmode;
+    }
+
+    public isCqHidden(): boolean {
+        return this.context.cqHidden;
     }
 
     public getPath(): string {
@@ -81,7 +85,7 @@ export class AemComponent<P extends AemProps, S> extends React.Component<P, S> {
 
 }
 
-export interface IncludeProps extends AemProps {
+export interface IncludeProps {
     path: string;
     resourceType: string;
     hidden?: boolean;
@@ -113,12 +117,13 @@ export interface Resource {
     "sling:resourceType": string;
 }
 
-export interface ResourceProps<C> extends AemProps {
+export interface ResourceProps<C> {
     resource?: C;
     component?: string;
     path: string;
     root?: boolean;
     wcmmode?: string;
+    cqHidden?: boolean;
 }
 
 
@@ -128,22 +133,28 @@ export interface ResourceProps<C> extends AemProps {
 export abstract class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
 
 
+    public static childContextTypes: any = {
+        wcmmode: React.PropTypes.string,//
+        path: React.PropTypes.string, //
+        resource: React.PropTypes.any, //
+        cqHidden: React.PropTypes.bool
+    };
+
+
     public getChildContext(): any {
         return {
-            resource: this.getResource(),
-            wcmmode: this.props.wcmmode || this.context.wcmmode,
-            path: this.getPath()
+            resource: this.getResource(), wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
         };
 
     }
 
-    public static childContextTypes: any = {
-        wcmmode: React.PropTypes.string, path: React.PropTypes.string, resource: React.PropTypes.any
-    };
-
 
     public getWcmmode(): string {
         return this.props.wcmmode || this.context.wcmmode;
+    }
+
+    public isCqHidden(): boolean {
+        return this.props.cqHidden || this.context.cqHidden;
     }
 
     public getPath(): string {
@@ -218,7 +229,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 }
 
 
-export interface ScriptProps extends AemProps {
+export interface ScriptProps {
     js: string;
 }
 
@@ -228,7 +239,7 @@ export class Script extends AemComponent<ScriptProps, any> {
     }
 }
 
-export interface CqEditProps extends AemProps {
+export interface CqEditProps {
     path: string;
     resourceType: string;
     dialog?: string;
@@ -276,7 +287,7 @@ export class Cq {
 
 }
 
-export interface EditMarkerProps extends AemProps {
+export interface EditMarkerProps {
     label?: string;
 }
 

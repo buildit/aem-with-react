@@ -2,39 +2,43 @@
 
 
 
-class AemProps {
+class AemContext {
     wcmmode: string;
     cqHidden?: boolean;
+    path: string;
+    resource: Resource;
 }
 
 class AemComponent {
 
-    isWcmEnabled(): boolean
-    isWcmEditable(): boolean
+    getResource(): Resource
+    getPath(): string
+    getResourceType(): string
+    getWcmmode(): string
+    isCqHidden(): boolean
     setAllEditableVisible(path: string, visible: boolean)
 }
 
-note right of AemProps
-cqHidden is true if this component
-and its ancestors are hidden.
-end note
-
-AemComponent -> AemProps : props
+AemComponent -> AemContext : context
 
 class Resource {
     "sling:resourceType": string;
 }
 
-class ResourceProps<R extends Resource> extends AemProps {
+class ResourceProps<R extends Resource> {
+    resource?: C;
     component?: string;
     path: string;
-    root: boolean;
+    root?: boolean;
+    wcmmode?: string;
+    cqHidden?: boolean;
+
 }
 
 ResourceProps -> Resource : resource
 
 class ResourceComponent<R extends Resource> extends AemComponent{
-    getResource():R
+    renderBody()
 }
 
 note left of ResourceComponent
