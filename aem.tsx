@@ -1,6 +1,6 @@
 import * as React from "react";
 import CqUtils from "./CqUtils";
-import {AemContext} from "./ComponentManager";
+import {ClientAemContext} from "./AemContext";
 
 interface CqWindow extends Window {
     CQ: any;
@@ -48,7 +48,7 @@ export class AemComponent<P, S> extends React.Component<P, S> {
         path: string;
         resource: any;
         cqHidden: boolean;
-        aemContext: AemContext;
+        aemContext: ClientAemContext;
     };
 
 
@@ -210,7 +210,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     }
 
     public getResourceType(): string {
-        return this.context.aemContext.componentManager.getResourceType(this);
+        return this.context.aemContext.registry.getResourceType(this);
     }
 
     public createNewChildNodeNames(prefix: String, count: number): string[] {
@@ -259,7 +259,10 @@ export class CqEdit extends AemComponent<CqEditProps, any> {
         } else {
             let dialog = this.props.dialog || "/apps/" + this.props.resourceType + "/dialog";
             let json = {
-                "path": this.props.path, "dialog": dialog, "type": this.props.resourceType, editConfig: this.props.editConfig
+                "path": this.props.path, //
+                "dialog": dialog, //
+                "type": this.props.resourceType,//
+                editConfig: this.props.editConfig
 
             };
 

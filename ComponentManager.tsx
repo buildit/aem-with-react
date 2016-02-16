@@ -2,38 +2,11 @@ import * as React from "react";
 import CqUtils from "./CqUtils";
 import * as aem from "./aem";
 import RootComponentRegistry from "./RootComponentRegistry";
+import RootComponent from "./RootComponent";
+import {ClientAemContext} from "./AemContext";
 
-export interface AemContext {
-    componentManager: ComponentManager;
-}
 
-declare var AemGlobal: any;
 
-export interface Config {
-    server: boolean;
-}
-
-type RootComponentProps = {
-    comp: typeof React.Component;
-    component: string;
-    aemContext: AemContext;
-}
-
-class RootComponent extends React.Component<RootComponentProps, any> {
-    public static childContextTypes: any = {
-        aemContext: React.PropTypes.any
-    };
-
-    public getChildContext(): any {
-        return {
-            aemContext: this.props.aemContext
-        };
-    }
-
-    public render(): React.ReactElement<any> {
-        return React.createElement(this.props.comp, this.props);
-    }
-}
 
 /**
  * An Instance wraps a root aem component and provides methods to rerender the component.
@@ -44,7 +17,7 @@ export class Instance {
     public node: any;
     public props: any;
     public componentClass: any;
-    public componentManager: ComponentManager;
+    public aemContext: ClientAemContext;
 
     /**
      * rerender the component
@@ -58,9 +31,8 @@ export class Instance {
         Object.keys(extraProps).forEach((key: string) => {
             newProps[key] = extraProps[key];
         });
-        let ctx: AemContext = {componentManager: this.componentManager};
 
-        React.render(<RootComponent aemContext={ctx} comp={this.componentClass} {...newProps} />, this.node);
+        React.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
     }
 
     /**
@@ -95,7 +67,7 @@ interface FetchWindow extends Window {
 /**
  * The Component
  */
-export class ComponentManager {
+export default class ComponentManager {
 
     constructor(registry: RootComponentRegistry) {
         this.instances = {} as {[path: string]:  Instance};
@@ -108,24 +80,6 @@ export class ComponentManager {
 
     private instances: {[path: string]: Instance};
 
-
-    /**
-     * render component as string. Server-side only.
-     * @param component
-     * @param props
-     * @returns {string}
-     */
-    public renderReactComponent(resourceType: string, props: any): string {
-        let rt: string = props.resource["sling:resourceType"];
-
-        let comp: typeof React.Component = this.registry.getComponent(rt);
-        if (!comp) {
-            throw new Error("cannot find component for resourceType " + rt);
-        }
-        console.log("rendering " + rt + " " + comp.name);
-        let ctx: AemContext = {componentManager: this};
-        return React.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
-    }
 
     /**
      * initialize specific component located in dom.
@@ -174,7 +128,7 @@ export class ComponentManager {
         instance.props = props;
         instance.node = node;
         instance.componentClass = componentClass;
-        instance.componentManager = this;
+        instance.aemContext = {registry: this.registry, componentManager: this};
         this.instances[path] = instance;
     }
 
@@ -219,7 +173,7 @@ export class ComponentManager {
                 console.error("React component '" + props.component + "' does not exist in component list.");
             } else {
                 console.log("Rendering react component '" + props.component + "'.");
-                let ctx: AemContext = {componentManager: this};
+                let ctx: ClientAemContext = {registry: this.registry, componentManager: this};
                 React.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
                 this.addInstance(props.path, comp, props, item);
 
