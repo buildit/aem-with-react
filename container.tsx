@@ -1,4 +1,4 @@
-import * as Aem from "./aem";
+import * as resource from "./component/ResourceComponent";
 
 export interface ContentModel {
     label: string;
@@ -11,10 +11,10 @@ export interface StackState {
 }
 
 
-export abstract class StackContainer extends Aem.ResourceComponent<Aem.Resource, Aem.ResourceProps<Aem.Resource>, StackState> {
+export abstract class StackContainer extends resource.ResourceComponent<resource.Resource, resource.ResourceProps<resource.Resource>, StackState> {
 
 
-    constructor(props: Aem.ResourceProps<Aem.Resource>) {
+    constructor(props: resource.ResourceProps<resource.Resource>) {
         super(props);
         // TODO remove this
         this.state = {activeIndex: 0};

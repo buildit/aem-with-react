@@ -1,6 +1,6 @@
-import * as aem from "./aem";
 import * as React from "react";
 import CqUtils from "./CqUtils";
+import AemComponent from "./component/AemComponent";
 
 export interface IncludeProps  {
     path: string;
@@ -10,7 +10,7 @@ export interface IncludeProps  {
 }
 
 
-export class ResourceInclude extends aem.AemComponent<IncludeProps, any> {
+export class ResourceInclude extends AemComponent<IncludeProps, any> {
 
     public render(): React.ReactElement<any> {
 

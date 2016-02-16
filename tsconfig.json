@@ -11,7 +11,7 @@
   },
   "files": [
     "./ComponentManager.tsx",
-    "./aem.tsx",
+    "./component/ResourceComponent.tsx",
     "./container.tsx",
     "./include.tsx",
     "./CqUtils.tsx",

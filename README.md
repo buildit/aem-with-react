@@ -31,14 +31,43 @@ The Rect component props are a json string inside of a textarea:
 
 ``` 
 
-To initialize the component the ComponentManager is used:
+To register components and map them to resourceTypes:
 
 ```javascript
 
-var mgr = ComponentManager.INSTANCE;
-mgr.init({server:false}); 
-mgr.initReactComponent(document.getElementById("MyReactComponent")); 
+// register all React Components and map to resourceTypes
+let registry: ComponentRegistry = new ComponentRegistry("react-demo/components");
+registry.register(Text);
+let rootComponentRegistry: RootComponentRegistry = new RootComponentRegistry();
+rootComponentRegistry.add(componentRegistry);
+rootComponentRegistry.init();
+``` 
 
+To initialize the components in the client:
+
+```javascript
+// create the componentManager
+let componentManager: ComponentManager = new ComponentManager(rootComponentRegistry);
+
+// find and render all components
+componentManager.initReactComponents();
+
+```  
+
+To initialize the components on the server:
+
+```javascript
+
+
+// create the ServerRenderer
+let serverRenderer: ServerRenderer = new ServerRenderer(rootComponentRegistry);
+
+// make renderer available to Java via a global variable:
+declare var AemGlobal: any;
+if (typeof AemGlobal === "undefined") {
+    throw "this is not the server side AEM context";
+}
+AemGlobal.renderReactComponent = serverRenderer.renderReactComponent.bind(serverRenderer);
 
 ```  
 

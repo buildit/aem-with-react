@@ -1,8 +1,9 @@
 import * as React from "react";
 import CqUtils from "./CqUtils";
-import * as aem from "./aem";
+import AemComponent from "./component/AemComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
-import RootComponent from "./RootComponent";
+import RootComponent from "./component/RootComponent";
+import {Resource} from "./component/ResourceComponent";
 import {ClientAemContext} from "./AemContext";
 
 
@@ -13,7 +14,7 @@ import {ClientAemContext} from "./AemContext";
  */
 export class Instance {
     public path: string;
-    public component: aem.AemComponent<any, any>;
+    public component: AemComponent<any, any>;
     public node: any;
     public props: any;
     public componentClass: any;
@@ -54,7 +55,7 @@ export class Instance {
      * rerender this instance with the new resource
      * @param resource
      */
-    public rerenderByResource(resource: aem.Resource): void {
+    public rerenderByResource(resource: Resource): void {
         this.rerender({resource: resource});
     }
 }
@@ -72,7 +73,7 @@ export default class ComponentManager {
     constructor(registry: RootComponentRegistry) {
         this.instances = {} as {[path: string]:  Instance};
         // TODO fix the dependencies
-        aem.Cq.on("wcmmodechange", this.onWcmModeChange, this);
+        CqUtils.on("wcmmodechange", this.onWcmModeChange, this);
         this.registry = registry;
     }
 
@@ -110,7 +111,7 @@ export default class ComponentManager {
         // TODO fix component type - should be ResourceComponent
         let instance: Instance = this.instances[component.props.path];
         if (instance) {
-            instance.component = component as aem.AemComponent<any, any>;
+            instance.component = component as AemComponent<any, any>;
 
         }
     }

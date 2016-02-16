@@ -1,7 +1,8 @@
 import * as React from "react";
-import RootComponent from "./RootComponent";
+import RootComponent from "./component/RootComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
-import AemContext from "./AemContext";
+import {AemContext} from "./AemContext";
+import {ResourceProps, Resource} from "./component/ResourceComponent";
 
 export default class ServerRenderer {
 
@@ -17,14 +18,14 @@ export default class ServerRenderer {
      * @param props
      * @returns {string}
      */
-    public renderReactComponent(resourceType: string, props: any): string {
+    public renderReactComponent(resourceType: string, props: ResourceProps<Resource>): string {
         let rt: string = props.resource["sling:resourceType"];
 
         let comp: typeof React.Component = this.registry.getComponent(rt);
         if (!comp) {
             throw new Error("cannot find component for resourceType " + rt);
         }
-        console.log("rendering " + rt + " " + comp.name);
+        console.log("rendering " + rt );
         let ctx: AemContext = {registry: this.registry};
         return React.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
     }

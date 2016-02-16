@@ -18,11 +18,21 @@ interface Wcm {
     getEditables(): any;
     removeListener(event: String, cb: any): void;
 }
+
+export declare type WcmModeListener = (wcmmode: string) => void;
+
 interface Cq {
     WCM: Wcm;
 }
 
 declare var CQ: Cq;
+
+interface CqWindow extends Window {
+    CQ: any;
+}
+
+declare var window: CqWindow;
+
 
 export default class CqUtils {
     /**
@@ -78,5 +88,14 @@ export default class CqUtils {
     public static removeEditable(path: string): void {
         CQ.WCM.unregisterEditable(path);
     }
+
+    public static on(event: string, cb: WcmModeListener, ctx: any): void {
+        if (typeof window !== "undefined" && window.CQ) {
+            window.CQ.WCM.getTopWindow().CQ.WCM.on(event, cb, this);
+        }
+    }
+
 }
+
+
 

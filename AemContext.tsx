@@ -5,7 +5,6 @@ export interface AemContext {
     registry: RootComponentRegistry;
 }
 
-export interface ClientAemContext extends AemContext
-{
+export interface ClientAemContext extends AemContext {
     componentManager: ComponentManager;
 }

@@ -1,7 +1,7 @@
 import * as React from "react";
-import {AemContext} from "./AemContext";
+import {AemContext} from "../AemContext";
 
-type RootComponentProps = {
+export interface RootComponentProps {
     comp: typeof React.Component;
     component: string;
     aemContext: AemContext;
