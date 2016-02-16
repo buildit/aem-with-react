@@ -1,7 +1,11 @@
 import * as React from "react";
 import CqUtils from "./CqUtils";
 import * as aem from "./aem";
+import RootComponentRegistry from "./RootComponentRegistry";
 
+export interface AemContext {
+    componentManager: ComponentManager;
+}
 
 declare var AemGlobal: any;
 
@@ -12,9 +16,20 @@ export interface Config {
 type RootComponentProps = {
     comp: typeof React.Component;
     component: string;
+    aemContext: AemContext;
 }
 
 class RootComponent extends React.Component<RootComponentProps, any> {
+    public static childContextTypes: any = {
+        aemContext: React.PropTypes.any
+    };
+
+    public getChildContext(): any {
+        return {
+            aemContext: this.props.aemContext
+        };
+    }
+
     public render(): React.ReactElement<any> {
         return React.createElement(this.props.comp, this.props);
     }
@@ -29,6 +44,7 @@ export class Instance {
     public node: any;
     public props: any;
     public componentClass: any;
+    public componentManager: ComponentManager;
 
     /**
      * rerender the component
@@ -42,7 +58,9 @@ export class Instance {
         Object.keys(extraProps).forEach((key: string) => {
             newProps[key] = extraProps[key];
         });
-        React.render(<RootComponent comp={this.componentClass} {...newProps} />, this.node);
+        let ctx: AemContext = {componentManager: this.componentManager};
+
+        React.render(<RootComponent aemContext={ctx} comp={this.componentClass} {...newProps} />, this.node);
     }
 
     /**
@@ -78,40 +96,18 @@ interface FetchWindow extends Window {
  * The Component
  */
 export class ComponentManager {
-    public static INSTANCE: ComponentManager;
-    public components: { [name: string]: typeof React.Component } = null;
-    private instances: {[path: string]: Instance};
 
-    /**
-     * initialize the react components.
-     * @param cfg
-     */
-    public static init(cfg: Config): void {
-        ComponentManager.INSTANCE = new ComponentManager();
-        if (cfg.server) {
-            if (typeof AemGlobal === "undefined") {
-                throw "this is not the server side AEM context";
-            }
-            AemGlobal.renderReactComponent = ComponentManager.INSTANCE.renderReactComponent.bind(ComponentManager.INSTANCE);
-        } else {
-            if (typeof AemGlobal === "undefined") {
-                AemGlobal = {};
-            }
-            if (typeof window === "undefined") {
-                throw "this is not the browser";
-            }
-            window.initReactComponents = ComponentManager.INSTANCE.initReactComponents.bind(ComponentManager.INSTANCE);
-            AemGlobal.componentManager = ComponentManager.INSTANCE;
-            AemGlobal.CqUtils = CqUtils;
-        }
-    }
-
-    constructor() {
+    constructor(registry: RootComponentRegistry) {
         this.instances = {} as {[path: string]:  Instance};
         // TODO fix the dependencies
         aem.Cq.on("wcmmodechange", this.onWcmModeChange, this);
-
+        this.registry = registry;
     }
+
+    private registry: RootComponentRegistry;
+
+    private instances: {[path: string]: Instance};
+
 
     /**
      * render component as string. Server-side only.
@@ -119,10 +115,16 @@ export class ComponentManager {
      * @param props
      * @returns {string}
      */
-    public renderReactComponent(component: string, props: any): string {
-        let comp: typeof React.Component = this.components[component];
-        console.log("rendering " + component);
-        return React.renderToString(<RootComponent comp={comp} {...props} />);
+    public renderReactComponent(resourceType: string, props: any): string {
+        let rt: string = props.resource["sling:resourceType"];
+
+        let comp: typeof React.Component = this.registry.getComponent(rt);
+        if (!comp) {
+            throw new Error("cannot find component for resourceType " + rt);
+        }
+        console.log("rendering " + rt + " " + comp.name);
+        let ctx: AemContext = {componentManager: this};
+        return React.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
     }
 
     /**
@@ -172,6 +174,7 @@ export class ComponentManager {
         instance.props = props;
         instance.node = node;
         instance.componentClass = componentClass;
+        instance.componentManager = this;
         this.instances[path] = instance;
     }
 
@@ -201,13 +204,6 @@ export class ComponentManager {
         return nested;
     }
 
-    /**
-     * set the react component types available
-     * @param comps
-     */
-    public setComponents(comps: { [name: string]: typeof React.Component }): void {
-        this.components = comps;
-    }
 
     /**
      * initialize react component in dom.
@@ -218,12 +214,13 @@ export class ComponentManager {
         if (textarea) {
             let props = JSON.parse(textarea.value);
             props.root = true;
-            let comp = this.components[props.component];
+            let comp = this.registry.getComponent(props.resource["sling:resourceType"]);
             if (comp == null) {
                 console.error("React component '" + props.component + "' does not exist in component list.");
             } else {
                 console.log("Rendering react component '" + props.component + "'.");
-                React.render(<RootComponent comp={comp} {...props} />, item);
+                let ctx: AemContext = {componentManager: this};
+                React.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
                 this.addInstance(props.path, comp, props, item);
 
             }
@@ -263,6 +260,14 @@ export class ComponentManager {
      */
     public reloadRoot(path: string): void {
         this.getParentInstance(path).reload();
+    }
+
+    public getResourceType(component: React.Component<any, any>): string {
+        return this.registry.getResourceType(component);
+    }
+
+    public getComponent(resourceType: string): typeof React.Component {
+        return this.registry.getComponent(resourceType);
     }
 
     /**
@@ -307,5 +312,7 @@ export class ComponentManager {
             }.bind(this), 0);
         }
     }
+
+
 }
 

@@ -1,6 +1,6 @@
 import * as React from "react";
-import * as component from "./ComponentManager";
 import CqUtils from "./CqUtils";
+import {AemContext} from "./ComponentManager";
 
 interface CqWindow extends Window {
     CQ: any;
@@ -39,7 +39,8 @@ export class AemComponent<P, S> extends React.Component<P, S> {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
         resource: React.PropTypes.any, //
-        cqHidden: React.PropTypes.bool
+        cqHidden: React.PropTypes.bool, //
+        aemContext: React.PropTypes.any
     };
 
     public context: {
@@ -47,6 +48,7 @@ export class AemComponent<P, S> extends React.Component<P, S> {
         path: string;
         resource: any;
         cqHidden: boolean;
+        aemContext: AemContext;
     };
 
 
@@ -80,7 +82,7 @@ export class AemComponent<P, S> extends React.Component<P, S> {
      * @param visible
      */
     public setAllEditableVisible(path: string, visible: boolean): void {
-        component.ComponentManager.INSTANCE.setNestedInstancesVisible(path, visible);
+        this.context.aemContext.componentManager.setNestedInstancesVisible(path, visible);
     }
 
 }
@@ -134,7 +136,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
 
     public static childContextTypes: any = {
-        wcmmode: React.PropTypes.string,//
+        wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
         resource: React.PropTypes.any, //
         cqHidden: React.PropTypes.bool
@@ -157,6 +159,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         return this.props.cqHidden || this.context.cqHidden;
     }
 
+
     public getPath(): string {
         if (this.context.path && this.props.path) {
             return this.context.path + "/" + this.props.path;
@@ -169,7 +172,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     }
 
     public componentDidMount(): void {
-        component.ComponentManager.INSTANCE.addComponent(this);
+        this.context.aemContext.componentManager.addComponent(this);
     }
 
 
@@ -203,11 +206,11 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     }
 
     public getResource(): C {
-        return this.props.resource || this.context.resource[this.props.path];
+        return this.props.resource || this.context.resource[this.props.path] || {};
     }
 
     public getResourceType(): string {
-        return this.getResource()["sling:resourceType"];
+        return this.context.aemContext.componentManager.getResourceType(this);
     }
 
     public createNewChildNodeNames(prefix: String, count: number): string[] {
