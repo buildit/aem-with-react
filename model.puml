@@ -1,12 +1,13 @@
 @startuml
 
-
+title the component model
 
 class AemContext {
     wcmmode: string;
     cqHidden?: boolean;
     path: string;
     resource: Resource;
+    registry: RootComponentRegistry;
 }
 
 class AemComponent {
@@ -63,43 +64,6 @@ MyComponent --> ResourceProps : props
 
 MyComponent .> MyResource
 
-class Instance {
-    path: string;
-    node: any
-    props: any
-    componentClass: any
-
-    rerender(extraProps: any): void
-    reload(): void
-    rerenderByResource(resource: aem.Resource): void
-}
-
-Instance -up-> ResourceComponent : component
-
-note bottom of Instance
-There is an Instance wrapping each root react component.
-The instance provides methods to rerender the component
-with new props.
-end note
-
-class ComponentManager {
-    renderReactComponent(component: string, props: any): string
-    getInstance(path: string): Instance
-    getNestedInstances(path: string): [Instance]
-    reloadComponent(path: string): void
-    getParentInstance(path: string): Instance
-    reloadRoot(path: string): void
-    reloadRootInCq(path: string): void
-    setNestedInstancesVisible(path: string, visible: boolean): void
-}
-
-ComponentManager -up-> Instance : instances
-
-note bottom of ComponentManager
-The ComponentManager provides access to all existing Instances.
-Also provides methids to create and update instances.
-
-end note
 
 
 @enduml

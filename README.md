@@ -74,4 +74,9 @@ AemGlobal.renderReactComponent = serverRenderer.renderReactComponent.bind(server
 
 ## API
 
+
+
 ![the model](model.png)
+
+
+![client side component management](clientside.png)

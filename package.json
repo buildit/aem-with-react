@@ -12,6 +12,10 @@
     "prepublish":"tsc --declaration && npm test"
   },
   "keywords": [
+    "aem",
+    "cq5",
+    "react",
+    "cms",
     "typescript",
     "node"
   ],
