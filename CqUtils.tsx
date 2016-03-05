@@ -51,7 +51,7 @@ export default class CqUtils {
                 }
             } else {
                 if (Object.keys(CQ.WCM.getEditables()).length === 0) {
-                    let cb = function(): void {
+                    let cb = function (): void {
                         CqUtils.setVisible(path, visible, recursive);
                         CQ.WCM.removeListener("editablesready", cb);
                     }.bind(this);
@@ -82,6 +82,7 @@ export default class CqUtils {
 
     public static refresh(path: string): void {
         let e: Editable = CQ.WCM.getEditable(path);
+        console.log("refresh " + path);
         e.refresh();
     }
 
@@ -91,10 +92,31 @@ export default class CqUtils {
 
     public static on(event: string, cb: WcmModeListener, ctx: any): void {
         if (typeof window !== "undefined" && window.CQ) {
-            window.CQ.WCM.getTopWindow().CQ.WCM.on(event, cb, this);
+            window.CQ.WCM.on(event, cb, this);
         }
     }
 
+    public static refreshNested(path: string): void {
+        let rootEditable: any = CQ.WCM.getEditable(path);
+        if (rootEditable) {
+            let element: any = rootEditable.element;
+            let editables: any = CQ.WCM.getEditables();
+            Object.keys(editables).forEach((editablePath: string) => {
+                let editable: any = editables[editablePath];
+                if (editable && CqUtils.isAncestor(element, editable) && !CqUtils.isVisible(editable)) {
+                    editable.show();
+                }
+            });
+        }
+    }
+
+    private static isVisible(editable: any): boolean {
+        return editable.element.dom.getBoundingClientRect().width > 0;
+    }
+
+    private static isAncestor(ancestor: any, element: any): boolean {
+        return true;
+    }
 }
 
 

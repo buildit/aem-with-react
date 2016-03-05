@@ -52,6 +52,10 @@ let componentManager: ComponentManager = new ComponentManager(rootComponentRegis
 // find and render all components
 componentManager.initReactComponents();
 
+// provide global access for inline scripts rendered on the server
+declare var AemGlobal: any;
+AemGlobal = {componentManager: componentManager};
+
 ```  
 
 To initialize the components on the server:

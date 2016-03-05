@@ -7,8 +7,6 @@ import {Resource} from "./component/ResourceComponent";
 import {ClientAemContext} from "./AemContext";
 
 
-
-
 /**
  * An Instance wraps a root aem component and provides methods to rerender the component.
  */
@@ -65,6 +63,40 @@ interface FetchWindow extends Window {
     fetch(url: string, options: any): any;
 }
 
+class EditableState {
+    public initialized: boolean
+    private editable: any
+
+    constructor(editable: any) {
+        this.editable = editable;
+        this.initialized = this.isVisible();
+    }
+
+    public isVisible(): boolean {
+        return this.editable.element.dom.getBoundingClientRect().width > 0;
+    }
+
+    public initialize(): void {
+        this.editable.show();
+        this.initialized = true;
+    }
+
+    public refresh(): void {
+        this.editable.refresh();
+    }
+
+    public tryToInitialize(): boolean {
+        if (!this.initialized && this.isVisible()) {
+            this.initialize();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+}
+
 /**
  * The Component
  */
@@ -80,6 +112,8 @@ export default class ComponentManager {
     private registry: RootComponentRegistry;
 
     private instances: {[path: string]: Instance};
+
+    private editables: {[path: string]: EditableState};
 
 
     /**
@@ -236,7 +270,13 @@ export default class ComponentManager {
         setTimeout(() => {
             CqUtils.removeEditable(path);
         }, 0);
-        CqUtils.refresh(parentPath);
+
+        let editable = this.editables[parentPath];
+        this.editables = {};
+        editable.refresh();
+        // TODO needs to be done when the new editables are actually created (makeEditable)
+        //window.setTimeout(this.initializeEditablesState.bind(this),100);
+        //this.updateEditablesState();
     }
 
 
@@ -244,6 +284,16 @@ export default class ComponentManager {
      * find all root elements and initialize the react components
      */
     public initReactComponents(): void {
+        this.editables = {};
+        CqUtils.on("editablesready", this.initializeEditablesState.bind(this), this);
+        // currently we reinitialize all editables.
+        CqUtils.on("editableready", this.updateEditables.bind(this), this);
+        /*        CqUtils.on("afterchildinsert", this.updateEditables.bind(this), this);
+         CqUtils.on("aftercopy", this.updateEditables.bind(this), this);
+         CqUtils.on("afterinsert", this.updateEditables.bind(this), this);
+         CqUtils.on("afterdelete", this.updateEditables.bind(this), this);
+         CqUtils.on("aftercopy", this.updateEditables.bind(this), this);*/
+
         let items = [].slice.call(document.querySelectorAll("[data-react]"));
         console.log(items.length + " react configs found.");
         for (let item of items) {
@@ -258,14 +308,39 @@ export default class ComponentManager {
      */
     public setNestedInstancesVisible(path: string, visible: boolean): void {
         if (typeof window !== "undefined") {
-            // timeout necessary to make sure that nested instances are ready.
+            // timeout necessary to make sure that nested instances are ready. This may be called during rendering of react component.
             // TODO improve timing by removing setTimeout
+            if (visible) {
+                this.updateEditablesState();
+            }
             setTimeout(function (): void {
                 this.getNestedInstances(path).forEach((instance: Instance) => {
                     instance.rerender({cqHidden: !visible});
                 });
             }.bind(this), 0);
         }
+    }
+
+
+    private updateEditables(): void {
+        this.initializeEditablesState();
+        this.updateEditablesState();
+    }
+
+    private updateEditablesState(): void {
+        Object.keys(this.editables).forEach((path: string) => {
+            this.editables[path].tryToInitialize();
+        }, this);
+    }
+
+    private initializeEditablesState(): void {
+        let editables: {[path: string]: any} = window.CQ.WCM.getEditables();
+        Object.keys(editables).forEach((path: string) => {
+            let editable: any = editables[path];
+            if (editable) {
+                this.editables[path] = new EditableState(editable);
+            }
+        }, this);
     }
 
 
