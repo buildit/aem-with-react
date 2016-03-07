@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://www.github.com.com/sinnerschrader/aem-react-js"
+    "url": "http://www.github.com/sinnerschrader/aem-react-js"
   },
   "devDependencies": {
     "typescript": "1.6.2",
