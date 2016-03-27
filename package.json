@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npm install typescript & tsd install",
-    "build": "tsc --declaration",
-    "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
+    "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
     "lint": "eslint . & tslint *.tsx",
     "postinstall": "npm run build",
-    "prepublish":"tsc --declaration && npm test"
+    "prepublish":"tsc --declaration && npm test",
+    "preversion": "npm test",
+    "version": "git add ."
   },
   "keywords": [
     "aem",

@@ -24,7 +24,7 @@
     "label-undefined": true,
     "max-line-length": [
       true,
-      140
+      180
     ],
     "member-access": true,
     "member-ordering": [
@@ -41,7 +41,6 @@
     "no-console": [
       true,
       "debug",
-      "info",
       "time",
       "timeEnd",
       "trace"

@@ -65,8 +65,8 @@ interface FetchWindow extends Window {
 }
 
 class EditableState {
-    public initialized: boolean
-    private editable: any
+    public initialized: boolean;
+    private editable: any;
 
     constructor(editable: any) {
         this.editable = editable;
