@@ -1,6 +1,6 @@
 {
   "name": "aem-react-js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Aem components with React.",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
     "lint": "eslint . & tslint *.tsx",
     "postinstall": "npm run build",
-    "prepublish":"tsc --declaration && npm test",
+    "prepublish": "tsc --declaration && npm test",
     "preversion": "npm test",
     "version": "git add ."
   },
