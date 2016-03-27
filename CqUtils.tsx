@@ -96,6 +96,9 @@ export default class CqUtils {
         }
     }
 
+    public static getEditables(): any {
+        return window.CQ.WCM.getEditables();
+    }
     public static refreshNested(path: string): void {
         let rootEditable: any = CQ.WCM.getEditable(path);
         if (rootEditable) {
@@ -118,9 +121,6 @@ export default class CqUtils {
         return true;
     }
 
-    public static getEditables(): any {
-        return window.CQ.getEditables();
-    }
 }
 
 

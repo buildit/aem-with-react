@@ -12,6 +12,7 @@
   "files": [
     "./ComponentManager.tsx",
     "./component/ResourceComponent.tsx",
+    "./component/ReactParsys.tsx",
     "./container.tsx",
     "./include.tsx",
     "./CqUtils.tsx",
