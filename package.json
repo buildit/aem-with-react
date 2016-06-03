@@ -6,10 +6,6 @@
   "scripts": {
     "preinstall": "npm install typescript & tsd install",
     "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "lint": "eslint . & tslint *.tsx",
-    "prepublish": "tsc && npm test",
-    "preversion": "npm test",
-    "version": "git add .",
     "build": "tsc"
   },
   "keywords": [
