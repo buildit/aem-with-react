@@ -7,10 +7,12 @@
     "jsx": "react",
     "noImplicitAny": true,
     "removeComments": true,
-    "preserveConstEnums": false
+    "preserveConstEnums": false,
+    "outDir": "./dist"
   },
   "files": [
     "./ComponentManager.tsx",
+    "./ServerRenderer.tsx",
     "./component/ResourceComponent.tsx",
     "./component/ReactParsys.tsx",
     "./container.tsx",

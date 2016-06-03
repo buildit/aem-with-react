@@ -8,3 +8,4 @@ npm-debug.log
 *.js.map
 *.tgz
 !references.d.ts
+dist
