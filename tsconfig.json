@@ -11,14 +11,14 @@
     "outDir": "./dist"
   },
   "files": [
-    "./ComponentManager.tsx",
-    "./ServerRenderer.tsx",
-    "./component/ResourceComponent.tsx",
-    "./component/ReactParsys.tsx",
-    "./container.tsx",
-    "./include.tsx",
-    "./CqUtils.tsx",
-    "./references.d.ts",
+    "./src/ComponentManager.tsx",
+    "./src/ServerRenderer.tsx",
+    "./src/component/ResourceComponent.tsx",
+    "./src/component/ReactParsys.tsx",
+    "./src/container.tsx",
+    "./src/include.tsx",
+    "./src/CqUtils.tsx",
+    "./src/references.d.ts",
     "./typings/tsd.d.ts"
 
   ]
