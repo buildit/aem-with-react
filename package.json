@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/panosvoudouris/aem-react-js"
+    "url": "https://github.com/panosvoudouris/aem-with-react"
   },
   "devDependencies": {
     "typescript": "^1.8.10",
