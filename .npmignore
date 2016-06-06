@@ -4,3 +4,4 @@ test
 *.puml
 src
 *.json
+*.js.map
