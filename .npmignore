@@ -1,2 +1,6 @@
 npm-debug.log
 test
+*.png
+*.puml
+src
+*.json

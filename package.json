@@ -1,6 +1,6 @@
 {
   "name": "aem-with-react",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Aem components with React.",
   "main": "dist/include.js",
   "scripts": {
@@ -22,10 +22,11 @@
     "url": "https://github.com/panosvoudouris/aem-with-react"
   },
   "devDependencies": {
-    "typescript": "^1.8.10",
     "espower-typescript": "^3.0.0",
     "mocha": "^2.3.4",
-    "power-assert": "^1.2.0"
+    "power-assert": "^1.2.0",
+    "tsd": "^0.6.5",
+    "typescript": "^1.8.10"
   },
   "dependencies": {
     "react": "^15.1.0",
