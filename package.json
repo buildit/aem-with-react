@@ -1,15 +1,12 @@
 {
-  "name": "aem-react-js",
-  "version": "0.3.0",
+  "name": "aem-with-react",
+  "version": "0.0.1",
   "description": "Aem components with React.",
   "main": "dist/include.js",
   "scripts": {
-    "preinstall": "npm install typescript & tsd install",
-    "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "lint": "eslint . & tslint *.tsx",
-    "prepublish": "tsc && npm test",
-    "preversion": "npm test",
-    "version": "git add .",
+    "clean": "rm -fr dist/*",
+    "postinstall": "tsd install",
+    "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
     "build": "tsc"
   },
   "keywords": [
@@ -25,13 +22,10 @@
     "url": "https://github.com/panosvoudouris/aem-react-js"
   },
   "devDependencies": {
-    "typescript": "1.6.2",
-    "tsd": "^0.6.5",
-    "eslint": "^1.6.0",
+    "typescript": "^1.8.10",
     "espower-typescript": "^3.0.0",
     "mocha": "^2.3.4",
-    "power-assert": "^1.2.0",
-    "tslint": "^2.5.1"
+    "power-assert": "^1.2.0"
   },
   "dependencies": {
     "react": "^15.1.0",
