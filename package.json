@@ -1,13 +1,12 @@
 {
   "name": "aem-with-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Aem components with React.",
   "main": "dist/include.js",
   "scripts": {
-    "clean": "rm -fr dist/*",
-    "postinstall": "tsd install",
+    "prepublish": "tsd install && tsc",
     "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "build": "tsc"
+    "build": "tsd install && tsc"
   },
   "keywords": [
     "aem",
