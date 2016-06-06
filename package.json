@@ -1,8 +1,10 @@
 {
   "name": "aem-with-react",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Aem components with React.",
-  "main": "dist/include.js",
+  "author": "Panos Voudouris <panosvoudouris@gmail.com> (https://github.com/panosvoudouris)",
+  "licence": "MIT",
+  "main": "./dist/",
   "scripts": {
     "prepublish": "tsd install && tsc",
     "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
