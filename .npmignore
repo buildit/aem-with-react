@@ -5,3 +5,4 @@ test
 src
 *.json
 *.js.map
+typings

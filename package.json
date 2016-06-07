@@ -1,6 +1,6 @@
 {
   "name": "aem-with-react",
-  "version": "0.1.3",
+  "version": "0.3.0",
   "description": "Aem components with React.",
   "author": "Panos Voudouris <panosvoudouris@gmail.com> (https://github.com/panosvoudouris)",
   "licence": "MIT",
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "react": "^15.1.0",
-    "react-dom": "^15.1.0"
+    "react-dom": "^15.1.0",
+    "react-frame-component": "^0.6.1"
   }
 }

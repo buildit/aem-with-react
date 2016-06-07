@@ -12,6 +12,7 @@
   },
   "files": [
     "./src/ComponentManager.tsx",
+    "./src/BaseComponent.tsx",
     "./src/ServerRenderer.tsx",
     "./src/component/ResourceComponent.tsx",
     "./src/component/ReactParsys.tsx",
