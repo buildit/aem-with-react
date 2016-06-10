@@ -34,9 +34,6 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
         let result:any = {
             resource: this.getResource(), wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
         };
-
-        console.log(result);
-
         return result;
     }
 
