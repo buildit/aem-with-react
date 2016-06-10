@@ -97,7 +97,15 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
     }
 
     public getResource(): C {
-        return this.props.resource || (this.context ? this.context.resource[this.props.path] : {}) || {};
+        if( this.props.resource ) {
+            return this.props.resource;
+        } else {
+            if( this.context && this.context.resource && this.props.path ) {
+                return this.context.resource[this.props.path]
+            }
+        }
+
+        return null
     }
 
     public getResourceType(): string {
