@@ -63,7 +63,9 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
     }
 
     public componentDidMount(): void {
-        this.context.aemContext.componentManager.addComponent(this);
+        if( this.context && this.context.aemContext && this.context.aemContext.componentManager ) {
+            this.context.aemContext.componentManager.addComponent(this);
+        }
     }
 
 
