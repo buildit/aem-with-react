@@ -14,9 +14,7 @@
     "aem",
     "cq5",
     "react",
-    "cms",
-    "typescript",
-    "node"
+    "typescript"
   ],
   "repository": {
     "type": "git",

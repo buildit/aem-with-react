@@ -9,3 +9,4 @@ npm-debug.log
 *.tgz
 !references.d.ts
 dist
+.editorconfig

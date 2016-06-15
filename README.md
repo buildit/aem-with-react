@@ -9,3 +9,6 @@ For further documentation on how it works please see the [AEM React Integration 
 ## Links
 * [Git repo](https://github.com/panosvoudouris/aem-with-react)
 * [NPM package](https://www.npmjs.com/package/aem-with-react)
+
+## Related projects
+* [Yeoman generator for creating components](https://www.npmjs.com/package/generator-aem-with-react)
