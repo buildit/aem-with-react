@@ -95,7 +95,7 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
         return children;
     }
 
-    public getResource(): C {
+    public getResource(): any {
         if( this.props.resource ) {
             return this.props.resource;
         } else {
@@ -104,7 +104,7 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
             }
         }
 
-        return null
+        return {};
     }
 
     public getResourceType(): string {
