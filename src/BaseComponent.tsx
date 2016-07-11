@@ -40,6 +40,11 @@ export default class BaseComponent extends ResourceComponent<Resource, ResourceP
     )
   }
 
+  public componentDidMount(): void {
+      super.componentDidMount();
+      document.body.classList.add('aem-react-loaded');
+  }
+
   // Override this to create your components
   protected createChildComponent(resource: Resource, resourceType: string, componentType: any, path: string ):any {
     let props: any = {resource: resource, path: path, key:this.generateKeyRef()}

@@ -28,8 +28,8 @@
     "typescript": "^1.8.10"
   },
   "dependencies": {
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1",
     "react-frame-component": "^0.6.1"
   }
 }
