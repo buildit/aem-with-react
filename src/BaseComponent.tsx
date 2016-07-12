@@ -40,9 +40,20 @@ export default class BaseComponent extends ResourceComponent<Resource, ResourceP
     )
   }
 
+  protected static markReactLoaded:Boolean = false;
   public componentDidMount(): void {
       super.componentDidMount();
-      document.body.classList.add('aem-react-loaded');
+
+      // Mark the CQ component that react components are now in it
+      if( !BaseComponent.markReactLoaded ) {
+        BaseComponent.markReactLoaded = true;
+        window.setTimeout(() => {
+          let cqElement:any = document.getElementById('CQ');
+          if( cqElement != null ) {
+            cqElement.classList.add('aem-react-loaded');
+          }
+        }, 1000);
+      }
   }
 
   // Override this to create your components
