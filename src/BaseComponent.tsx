@@ -69,7 +69,7 @@ export default class BaseComponent extends ResourceComponent<Resource, ResourceP
   protected createNewZone() {
     let newZone: React.ReactElement<any> = null
     if( this.isWcmEditable() ) {
-      let resourceType = this.getRegistry().getResourceType(ReactParsys)
+      let resourceType = this.getResourceType() + "/../react-parsys/new";
       newZone = <ResourceInclude element="div" path={ this.getPath() + "/*" }
       resourceType={ resourceType }></ResourceInclude>
     }
