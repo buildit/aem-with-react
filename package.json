@@ -1,13 +1,15 @@
 {
   "name": "aem-with-react",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Aem components with React.",
   "author": "Buildit",
-  "contributors": [{
-    "name": "Panos Voudouris",
-    "email": "panagiotis.voudouris@wipro.com",
-    "url": "https://github.com/panosvoudouris"
-  }],
+  "contributors": [
+    {
+      "name": "Panos Voudouris",
+      "email": "panagiotis.voudouris@wipro.com",
+      "url": "https://github.com/panosvoudouris"
+    }
+  ],
   "licence": "ISC",
   "scripts": {
     "prepublish": "tsd install && tsc",
