@@ -2,8 +2,13 @@
   "name": "aem-with-react",
   "version": "0.7.0",
   "description": "Aem components with React.",
-  "author": "Panos Voudouris <panosvoudouris@gmail.com> (https://github.com/panosvoudouris)",
-  "licence": "MIT",
+  "author": "Buildit",
+  "contributors": [{
+    "name": "Panos Voudouris",
+    "email": "panagiotis.voudouris@wipro.com",
+    "url": "https://github.com/panosvoudouris"
+  }],
+  "licence": "ISC",
   "scripts": {
     "prepublish": "tsd install && tsc",
     "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
