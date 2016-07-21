@@ -3,6 +3,8 @@ import { Resource, ResourceComponent, ResourceProps } from './component/Resource
 import { ResourceUtils } from './ResourceUtils'
 import { ResourceInclude } from './include'
 import CqUtils from "./CqUtils"
+import ReactParsys from './component/ReactParsys'
+
 var Frame = require('react-frame-component')
 
 export default class BaseComponent extends ResourceComponent<Resource, ResourceProps<Resource>, any> {
@@ -67,7 +69,7 @@ export default class BaseComponent extends ResourceComponent<Resource, ResourceP
   protected createNewZone() {
     let newZone: React.ReactElement<any> = null
     if( this.isWcmEditable() ) {
-      let resourceType = this.getResourceType() + "/../react-parsys/new"
+      let resourceType = this.getRegistry().getResourceType(ReactParsys)
       newZone = <ResourceInclude element="div" path={ this.getPath() + "/*" }
       resourceType={ resourceType }></ResourceInclude>
     }
