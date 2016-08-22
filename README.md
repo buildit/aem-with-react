@@ -7,7 +7,7 @@ React version has been updated to v15.
 For further documentation on how it works please see the [AEM React Integration module documentation](https://github.com/sinnerschrader/aem-react-js)
 
 ## Links
-* [Git repo](https://github.com/panosvoudouris/aem-with-react)
+* [Git repo](https://github.com/buildit/aem-with-react)
 * [NPM package](https://www.npmjs.com/package/aem-with-react)
 
 ## Related projects
