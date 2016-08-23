@@ -12,3 +12,4 @@ For further documentation on how it works please see the [AEM React Integration 
 
 ## Related projects
 * [Yeoman generator for creating components](https://www.npmjs.com/package/generator-aem-with-react)
+* [Project scaffold](https://github.com/buildit/aem-react-scaffold)
