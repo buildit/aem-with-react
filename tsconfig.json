@@ -8,9 +8,10 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": false,
-    "outDir": "./"
+    "outDir": "./dist"
   },
   "files": [
+    "./src/index.tsx",
     "./src/ComponentManager.tsx",
     "./src/BaseComponent.tsx",
     "./src/ServerRenderer.tsx",

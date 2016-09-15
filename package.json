@@ -14,7 +14,7 @@
   "scripts": {
     "prepublish": "tsd install && tsc",
     "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "build": "tsd install && tsc",
+    "build": "tsc",
     "clean": "rm -fr *.js *.js.map component typings"
   },
   "keywords": [
@@ -27,6 +27,7 @@
     "type": "git",
     "url": "https://github.com/buildit/aem-with-react.git"
   },
+  "main": "dist/index",
   "devDependencies": {
     "espower-typescript": "^3.0.0",
     "mocha": "^2.3.4",
