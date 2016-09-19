@@ -7,7 +7,7 @@
     "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
     "lint": "tslint src/*.tsx",
     "postinstall": "npm run build",
-    "prepublish": "tsd install && tsc --declaration && npm test",
+    "prepublish": "tsc --declaration && npm test",
     "preversion": "npm test",
     "version": "git add .",
     "build": "tsc",
