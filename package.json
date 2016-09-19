@@ -5,7 +5,7 @@
   "scripts": {
     "prepublish": "tsd install && tsc",
     "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "build": "tsd install && tsc",
+    "build": "tsc",
     "clean": "rm -fr *.js *.js.map component typings"
   },
   "keywords": [
@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "react": "^15.2.1",
-    "react-dom": "^15.2.1",
-    "react-frame-component": "^0.6.1"
+    "react-dom": "^15.2.1"
   }
 }

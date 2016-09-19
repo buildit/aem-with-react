@@ -5,8 +5,6 @@ import { ResourceInclude } from './include'
 import CqUtils from "./CqUtils"
 import ReactParsys from './component/ReactParsys'
 
-var Frame = require('react-frame-component')
-
 export default class BaseComponent extends ResourceComponent<Resource, ResourceProps<Resource>, any> {
   protected fixedComponents: Array<any> = []
   constructor( props: ResourceProps<Resource> ) {
@@ -77,7 +75,7 @@ export default class BaseComponent extends ResourceComponent<Resource, ResourceP
     return newZone
   }
 
-  protected renderPrep(asComponent?: boolean): React.ReactElement<any>[] {
+  protected renderPrep(): React.ReactElement<any>[] {
     let content: any = this.getResource()
     let children: any = ResourceUtils.getChildren(content)
     let childComponents: React.ReactElement<any>[] = []
@@ -90,17 +88,9 @@ export default class BaseComponent extends ResourceComponent<Resource, ResourceP
 
       if( !this.isFixedComponent(path) ) {
         if( componentType ) {
-          let element: any = null
           const childElement: any = this.createChildComponent(resource, resourceType, componentType, path)
-
-          if ( asComponent ) {
-            element = <Frame>{childElement}</Frame>
-          } else {
-            element = childElement
-          }
-
-          if( element ) {
-            childComponents.push(element)
+          if( childElement ) {
+            childComponents.push(childElement)
           }
         } else {
           childComponents.push(<ResourceInclude path={path} resourceType={resourceType}></ResourceInclude>)
