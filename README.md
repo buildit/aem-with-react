@@ -93,7 +93,7 @@ router/AemLink.tsx(4,38): error TS4020: Extends clause of exported class 'AemLin
 ![client side component management](clientside.png)
 
 
-## Trouble shooting`
+## Trouble shooting
 
 ### Error during rendering on server only
 
