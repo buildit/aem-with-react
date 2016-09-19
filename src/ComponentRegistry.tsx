@@ -27,11 +27,12 @@ export default class ComponentRegistry {
 
     private mapToResourceType(componentClassName: string, subTree: string): string {
         let resourceType: string = null;
+
         if (typeof this.mapping === "function") {
             resourceType = this.mapping(componentClassName);
         } else if (typeof this.mapping === "string") {
             resourceType = this.mapping + "/";
-            if( subTree && subTree.length > 0 ) {
+            if ( subTree && subTree.length > 0 ) {
                 resourceType += subTree + "/";
             }
             resourceType += this.mapClassToResourceType(componentClassName);

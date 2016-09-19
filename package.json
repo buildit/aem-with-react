@@ -3,8 +3,13 @@
   "version": "0.2.2",
   "description": "Aem components with React.",
   "scripts": {
-    "prepublish": "tsd install && tsc",
-    "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
+    "preinstall": "npm install typescript & tsd install",
+    "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
+    "lint": "tslint src/*.tsx",
+    "postinstall": "npm run build",
+    "prepublish": "tsd install && tsc --declaration && npm test",
+    "preversion": "npm test",
+    "version": "git add .",
     "build": "tsc",
     "clean": "rm -fr *.js *.js.map component typings"
   },
@@ -25,6 +30,7 @@
     "mocha": "^2.3.4",
     "power-assert": "^1.2.0",
     "tsd": "^0.6.5",
+    "tslint": "^3.15.1",
     "typescript": "^1.8.10"
   },
   "dependencies": {

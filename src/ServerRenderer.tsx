@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import * as ReactDOMServer from "react-dom/server";
 import RootComponent from "./component/RootComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
@@ -7,13 +6,11 @@ import {AemContext} from "./AemContext";
 import {ResourceProps, Resource} from "./component/ResourceComponent";
 
 export default class ServerRenderer {
+    private registry: RootComponentRegistry;
 
     constructor(registry: RootComponentRegistry) {
         this.registry = registry;
     }
-
-    private registry: RootComponentRegistry;
-
 
     /* render component as string.
      * @param component

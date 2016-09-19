@@ -103,6 +103,9 @@ class EditableState {
  * The Component
  */
 export default class ComponentManager {
+    private registry: RootComponentRegistry;
+    private instances: {[path: string]: Instance};
+    private editables: {[path: string]: EditableState};
 
     constructor(registry: RootComponentRegistry) {
         this.instances = {} as {[path: string]:  Instance};
@@ -110,13 +113,6 @@ export default class ComponentManager {
         CqUtils.on("wcmmodechange", this.onWcmModeChange, this);
         this.registry = registry;
     }
-
-    private registry: RootComponentRegistry;
-
-    private instances: {[path: string]: Instance};
-
-    private editables: {[path: string]: EditableState};
-
 
     /**
      * initialize specific component located in dom.
@@ -165,7 +161,7 @@ export default class ComponentManager {
         instance.props = props;
         instance.node = node;
         instance.componentClass = componentClass;
-        instance.aemContext = {registry: this.registry, componentManager: this};
+        instance.aemContext = {componentManager: this, registry: this.registry};
         this.instances[path] = instance;
     }
 
@@ -210,7 +206,7 @@ export default class ComponentManager {
                 console.error("React component '" + props.component + "' does not exist in component list.");
             } else {
                 console.log("Rendering react component '" + props.component + "'.");
-                let ctx: ClientAemContext = {registry: this.registry, componentManager: this};
+                let ctx: ClientAemContext = {componentManager: this, registry: this.registry};
                 ReactDOM.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
                 this.addInstance(props.path, comp, props, item);
 
